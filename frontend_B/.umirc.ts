@@ -6,6 +6,7 @@ export default defineConfig({
   },
   routes: [
     { path: '/', component: '@/pages/index' },
+    { path: '/edit-page', component: '@/pages/edit-page' }
   ],
   fastRefresh: {},
   mfsu:{}
