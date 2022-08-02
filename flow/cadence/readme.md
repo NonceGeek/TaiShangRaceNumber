@@ -90,3 +90,7 @@ Code (hidden, use --include code)
 
 Payload (hidden, use --include payload)
 ```
+
+# View it on testnet
+
+> https://flow-view-source.com/testnet/account/0x16fa33cab0a7b7c2/contract/HelloWorld
