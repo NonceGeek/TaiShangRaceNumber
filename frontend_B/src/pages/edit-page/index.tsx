@@ -1,5 +1,6 @@
 import Header from '../../components/header/index'
 import CustomTitle from '@/components/custom-title';
+import { history } from 'umi'
 import './index.less';
 import { Button, Input} from "antd"
 import { useState } from 'react';
@@ -20,7 +21,9 @@ export default function EditPage() {
   }
 
   const confirm = () => {
-    // TO DO
+    history.push({
+      pathname: '/template-select'
+    })
   }
   const inputLongStyle = {
     borderRadius: '10px',
