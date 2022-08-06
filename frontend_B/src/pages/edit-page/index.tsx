@@ -3,6 +3,7 @@ import CustomTitle from '@/components/custom-title';
 import { history } from 'umi'
 import './index.less';
 import { Button, Input} from "antd"
+import RectButton from '../../components/rect-button'
 import { useState } from 'react';
 export default function EditPage() {
   const [editData, setEditData] = useState({ // 初始化表单数据
@@ -40,15 +41,6 @@ export default function EditPage() {
     borderRadius: '10px',
     height: '70px'
   }
-  const confirmBtnStyle = {
-    fontSize: '24px',
-    fontWeight: '700',
-    color: 'white',
-    padding: '0 23px',
-    background: 'linear-gradient(180deg, #0048BD 0%, #0027A4 100%)',
-    height: '70px',
-    width: '100%'
-  }
   return (
     <div className='edit-page'>
       <Header />
@@ -59,7 +51,7 @@ export default function EditPage() {
           <div className='input-warp'><Input value={editData.contractAddress} style={inputLongStyle} onChange={
             (e) => setEditData(editData => { return {...editData, contractAddress: e.target.value}})
             } /></div>
-          <div className='btn-wrap'><Button style={btnStyle} onClick={deployContract}>Quick Deploy</Button></div>
+          <div className='btn-wrap'><RectButton onClick={deployContract} btnText={'Quick deploy'} type={'corner'} /></div>
         </div>
         <div className='mb-12'>
           <div className='mb-1 deploy-label'>Game name</div>
@@ -96,7 +88,7 @@ export default function EditPage() {
             (e) => setEditData(editData => { return {...editData, issues: e.target.value}})
           } /></div>
         </div>
-        <div className='btn-wrap confirm-btn mt-20'><Button onClick={confirm} style={confirmBtnStyle}><span style={{transform: 'skew(30deg)'}}>Confirm</span></Button></div>
+        <div className='btn-wrap confirm-btn mt-20'><RectButton onClick={confirm} btnText={'Confirm'} type={'rect'} /></div>
       </div>
     </div>
   );
