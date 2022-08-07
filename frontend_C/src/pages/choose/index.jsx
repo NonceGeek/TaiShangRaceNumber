@@ -10,7 +10,7 @@ import Card from '@/components/Card';
 import Button from '@/components/Button';
 
 export default function index() {
-  const [RaceNumber,setRaceNumber] = useState()
+  const [RaceNumber,setRaceNumber] = useState("1000")
   const cards = [];
   for (let i = 1000; i < 1050; i++) {
     cards.push({ number: i, status: true });
@@ -50,7 +50,7 @@ export default function index() {
                 <img src={Price} alt="" />
                 <span>50</span>
               </div>
-              <Button content="Minte"></Button>
+              <Button content="Minte" url={`/edit?number=${RaceNumber}`}></Button>
             </div>
           </div>
         </main>
