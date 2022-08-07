@@ -109,6 +109,7 @@ pub contract Racenumber:NonFungibleToken {
         pub var totalSupply:UInt64;
         pub(set) var minted:{UInt64:Address};
         pub(set) var mintedAddrs:[Address];
+        pub(set) var themeMintedAddrs:[Address];
         pub var name: String;
         pub var startDate: UInt32;
         pub var hostAddr: Address
@@ -136,15 +137,21 @@ pub contract Racenumber:NonFungibleToken {
             self.mintedAddrs.append(addr)
             recipient.deposit(token: <-token)
         }
-        pub fun mintTheme(num:UInt64, type:UInt8,recipient: &ThemeCollection) :UInt64 {
-            //todo 校验是否有权限mint
-            let addr:Address = recipient.owner!.address;
-            //获取到他的号牌NFT
-            //getAccount(addr).getCapability(Racenumber.NumberNFTCollectionPublicPath).borrow(<&
+        pub fun mintTheme(type:UInt8,recipient: &ThemeCollection{ThemeCollectionPublic}){
+            pre{
+                self.types.contains(type):"Theme Type doesn't exist!"
+            }
+            let addr = recipient.owner!.address;
+            assert(!self.themeMintedAddrs.contains(addr),message:"Your address has minted theme NFT!")
+            assert(self.mintedAddrs.contains(addr), message: "You donn't own Number NFT, has no permission to mint!")
+            let nft <- create ThemeNFT(eventId: self.eventId, name: self.name, host: self.hostAddr, type: type, owner: addr)
+            self.themeMintedAddrs.append(addr)
+            recipient.deposit(token: <-nft)
 
-            //self.mintedNum = self.mintedNum +1;
-            //recipient.deposit(token: <-token)
-            return 0
+        }
+
+        pub fun canMintTheme(addr:Address) :Bool{
+            return self.mintedAddrs.contains(addr)
         }
 
         init(name:String,totalSupply:UInt64, startDate: UInt32, hostAddr: Address, eventId:UInt64) {
@@ -158,6 +165,7 @@ pub contract Racenumber:NonFungibleToken {
             self.types = [];
             self.id = self.uuid
             self.mintedAddrs = []
+            self.themeMintedAddrs = []
         }
         
         pub fun setImgAndTypes(imgUrl:String, types: [UInt8]) {
@@ -215,7 +223,7 @@ pub contract Racenumber:NonFungibleToken {
             self.name = name
             self.host = host
             self.type = type
-            self.numberNFTCap = getAccount(host).getCapability<&NFT>(Racenumber.NumberNFTCollectionPublicPath)
+            self.numberNFTCap = getAccount(host).getCapability<&NFT>(Racenumber.NumberNFTCollectionPublicPath)  //并不能完全绑定上这个NFT
         }
     }
 
@@ -259,7 +267,7 @@ pub contract Racenumber:NonFungibleToken {
     }
 
     pub resource interface ThemeCollectionPublic {
-        pub fun deposit(token:@NonFungibleToken.NFT)
+        pub fun deposit(token:@ThemeNFT)
         pub fun getIDs(): [UInt64]
         pub fun borrowNFT(id:UInt64): &ThemeNFT
     }
@@ -272,7 +280,7 @@ pub contract Racenumber:NonFungibleToken {
             return <- token
         }
 
-        pub fun deposit(token:@NonFungibleToken.NFT) {
+        pub fun deposit(token:@ThemeNFT) {
             let nft <- token as! @ThemeNFT;
             let id = nft.id;
             self.ownedNFTs[id]<-! nft;
