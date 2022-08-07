@@ -64,7 +64,7 @@ export default function index(props) {
               Add material
             </div>
             <div className={styles.btn}>
-              <Button content="Confirm"></Button>
+              <Button content="Confirm" url={`/buy?brand=${JSON.stringify(brand)}&number=${number}`}></Button>
             </div>
           </div>
         </main>
