@@ -5,7 +5,9 @@ export default defineConfig({
     type: 'none',
   },
   routes: [
-    { path: '/', component: '@/pages/sign' },
+    { path: '/sign', component: '@/pages/sign' },
+    { path: '/choose', component: '@/pages/choose' },
+    { path: '/edit', component: '@/pages/edit' },
   ],
   fastRefresh: {},
   mfsu:{}

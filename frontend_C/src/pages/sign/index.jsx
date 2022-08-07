@@ -6,6 +6,7 @@ import Rectangle from "@/assets/images/Rectangle.png"
 import Header from "@/components/Header"
 import Number from "@/components/Number"
 import Info from "@/components/Info"
+import Button from "@/components/Button";
 export default function index() {
   return (
     <>
@@ -28,7 +29,12 @@ export default function index() {
             </div>
           </div>
           <div className={styles.right}>
-            <Info></Info>
+            <div className="mb-8">
+              <Info></Info>
+            </div>
+            <div className="flex justify-center">
+              <Button content="Sign up"></Button>
+            </div>
           </div>
         </main>   
       </div>
