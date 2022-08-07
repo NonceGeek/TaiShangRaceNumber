@@ -16,7 +16,7 @@ export default function TemplateSelect() {
   }
   const goToConfirm = (type: string) => {
     history.push({
-      pathname: '/confirm-card',
+      pathname: '/modify-page',
       query: {
         type: type
       }
@@ -24,19 +24,19 @@ export default function TemplateSelect() {
   }
   const typeList = [
     'rectStyle',
-    'eight-border',
-    'six-border',
+    'eightBorder',
+    'sixBorder',
     'oval',
-    'circle-corner',
-    'right-corner',
-    'left-corner'
+    'circleCorner',
+    'rightCorner',
+    'leftCorner'
   ]
   return (
     <div className='template-select pb-20'>
       <Header />
       <CustomTitle title={"Select a RaceNumber template"} />
       <div className='type-selector flex flex-nowrap mt-16 mb-12'>
-        <div className='select-icon icon-margin' onClick={() => switchType('run')}>
+        <div className='select-icon icon-margin cursor-pointer' onClick={() => switchType('run')}>
           {gameType === 'run' ? <img src={runActived} alt="" /> : <img src={run} alt="" />}
         </div>
         <div className='select-icon icon-margin' onClick={() => switchType('ride')}>
@@ -46,7 +46,7 @@ export default function TemplateSelect() {
       <div className='template-container overflow-auto gap-4'>
         {
           typeList.map((item: any, index: number) => {
-            return <div className='type-container text-center' key={index} onClick={() => goToConfirm(item)}>
+            return <div className='type-container text-center cursor-pointer' key={index} onClick={() => goToConfirm(item)}>
               <img src={require(`../../assets/images/${item}.png`)} alt="" />
             </div>
           })
