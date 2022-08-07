@@ -7,7 +7,7 @@ import Header from "@/components/Header"
 import Number from "@/components/Number"
 import Info from "@/components/Info"
 import Button from "@/components/Button";
-export default function index() {
+export default function index(props) {
   return (
     <>
       <div className={styles.main}>
@@ -33,7 +33,7 @@ export default function index() {
               <Info></Info>
             </div>
             <div className="flex justify-center">
-              <Button content="Sign up"></Button>
+              <Button content="Sign up" url="/choose"></Button>
             </div>
           </div>
         </main>   
