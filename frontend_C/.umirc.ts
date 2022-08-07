@@ -8,7 +8,8 @@ export default defineConfig({
     { path: '/sign', component: '@/pages/sign' },
     { path: '/choose', component: '@/pages/choose' },
     { path: '/edit', component: '@/pages/edit' },
-    {path: '/buy', component: '@/pages/buy'}
+    {path: '/buy', component: '@/pages/buy'},
+    {path: '/deal', component: '@/pages/deal'}
   ],
   fastRefresh: {},
   mfsu:{}
