@@ -4,17 +4,62 @@ import text from '../../assets/icons/text.svg'
 import { SketchPicker } from 'react-color'
 import { BulbFilled, DownOutlined } from '@ant-design/icons'
 import RectButton from '../../components/rect-button'
+import { create, CID, IPFSHTTPClient } from "ipfs-http-client"
+import domtoimage from 'dom-to-image';
+import rLogo from '../../assets/icons/r-title.svg'
 
 import './index.less';
 import {Button, Popover} from "antd"
 import { useEffect, useState } from 'react';
 
+
+
 export default function ModifyPage(props: any) {
 
   const [color, setColor] = useState('#00209E')
   const [showColorPicker, setShowColorPicker] = useState(false)
+  const [image, setImage] = useState({cid: '', path: ''})
+  const [imageUrl, setImageUrl] = useState('')
   const handleChangeColor = (e: any) => {
     setColor(e.hex)
+  }
+
+    const parseValue = (value: string) => {
+        return parseInt(value, 10);
+    }
+
+  const draw = async () => {
+    const dom = document.getElementById('draw') as any
+    const box = window.getComputedStyle(dom);
+    // DOM 节点计算后宽高
+    const width = parseValue(box.width);
+    const height = parseValue(box.height);
+
+    domtoimage.toSvg(dom, {width: width, height: height, style: typeList[props.location.query.type]})
+    .then(function (dataUrl: string) {
+      setImageUrl(dataUrl)
+      addFile(dataUrl)
+    })
+    .catch(function (error: any) {
+        console.error('oops, something went wrong!', error);
+    });
+  }
+
+  const addFile = async (file: any) => {
+    // const ipfs = create(new URL('https://ipfs.infura.io:5001'))
+    let ipfs: IPFSHTTPClient | undefined;
+    try {
+      ipfs = create({
+        url: "https://ipfs.infura.io:5001",
+
+      });
+    } catch (error) {
+      console.error("IPFS error ", error);
+      ipfs = undefined;
+    }
+    console.log(ipfs)
+    const added = await ipfs?.add(file)
+    console.log(added)
   }
 
   const handleColorPicker = (anchor: boolean) => {
@@ -71,13 +116,27 @@ export default function ModifyPage(props: any) {
           <RectButton btnText={'Set to user editable'} type={'freeStyle'} style={{marginRight: '120px'}} />
           <div style={{marginLeft: '120px'}} className='btn-wrap'><RectButton btnText={'Allow user to add material'} type={'freeStyle'} /></div>
         </div>
-        <div 
-          className='template-card-container' 
-          style={{
-            ...typeList[props.location.query.type], 
-            backgroundImage: `url(${require('../../assets/images/blue.png')})`}}>
-              <div className='text-center pt-4 text-white ft-s-36'>Run Run Run</div>
+        <div className='outer-container'>
+          <div id='draw' style={{padding: '20px'}}>
+            <div 
+              className='template-card-container' 
+              id='card-dom'
+              style={{
+                ...typeList[props.location.query.type], 
+                backgroundImage: `url(${require('../../assets/images/blue.png')})`}}>
+                  <div className='text-center pt-4 text-white ft-s-36'>Run Run Run</div>
+                  <div className='text-center ft-s-145 text-white'>1213</div>
+                  <div className='flex'>
+                    <img src={rLogo} alt="" />
+                    <div className='text-white ft-s-32 w-353 ml-2'>RaceNumber Marathon 2024</div>
+                  </div>
+            </div>
+          </div>
         </div>
+        <Button onClick={draw}>draw</Button>
+      </div>
+      <div>
+        <img src={imageUrl} alt="" />
       </div>
     </div>
   );

@@ -46,14 +46,14 @@ export default function EditPage() {
       <Header />
       <CustomTitle title={"Let's create information for the game"} />
       <div className='edit-form pb-16'>
-        <div className='mt-60 mb-1 deploy-label'>Add your game contract address</div>
-        <div className='flex deploy-address mb-12'>
+        {/* <div className='mt-60 mb-1 deploy-label'>Add your game contract address</div> */}
+        {/* <div className='flex deploy-address mb-12'>
           <div className='input-warp'><Input value={editData.contractAddress} style={inputLongStyle} onChange={
             (e) => setEditData(editData => { return {...editData, contractAddress: e.target.value}})
             } /></div>
           <div className='btn-wrap'><RectButton onClick={deployContract} btnText={'Quick deploy'} type={'corner'} /></div>
-        </div>
-        <div className='mb-12'>
+        </div> */}
+        <div className='mb-12 mt-60'>
           <div className='mb-1 deploy-label'>Game name</div>
           <div className='input-warp'><Input value={editData.name} style={inputLongStyle} onChange={
             (e) => setEditData(editData => { return {...editData, name: e.target.value}})

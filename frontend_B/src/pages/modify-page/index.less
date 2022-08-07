@@ -31,11 +31,15 @@
   height: 30px;
   transform: skew(20deg);
 }
-.template-card-container {
-  width: 600px;
-  height: 386px;
-  margin: 0 auto;
-  background-size:100% 100%;
-  background-attachment:fixed;
-  background-repeat: no-repeat;
+.outer-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  .template-card-container {
+    width: 600px;
+    height: 386px;
+    background-size: 100% 100%;
+    background-attachment:fixed;
+    background-repeat: no-repeat;
+  }
 }
