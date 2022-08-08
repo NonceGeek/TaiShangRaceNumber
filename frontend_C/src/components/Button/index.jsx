@@ -1,8 +1,14 @@
 import React from 'react';
 import styles from './index.less';
-export default function index({ content }) {
+import { history } from 'umi';
+export default function index(props) {
+  const { content ,url} = props;
   return (
-    <div>
+    <div onClick={()=>{
+      url?
+      history.push(url):
+      ''
+    }}>
       <div className={styles.button}>
         <div className={styles.buttonLeft}></div>
         <div className={styles.buttonMiddle}>
