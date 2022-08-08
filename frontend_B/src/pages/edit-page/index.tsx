@@ -22,6 +22,7 @@ export default function EditPage() {
   }
 
   const confirm = () => {
+    sessionStorage.setItem('gameData', JSON.stringify(editData))
     history.push({
       pathname: '/template-select'
     })
@@ -88,7 +89,9 @@ export default function EditPage() {
             (e) => setEditData(editData => { return {...editData, issues: e.target.value}})
           } /></div>
         </div>
-        <div className='btn-wrap confirm-btn mt-20'><RectButton onClick={confirm} btnText={'Confirm'} type={'rect'} /></div>
+        <div className='btn-wrap confirm-btn mt-20'>
+          <RectButton onClick={confirm} btnText={'Confirm'} type={'rect'} />
+        </div>
       </div>
     </div>
   );
