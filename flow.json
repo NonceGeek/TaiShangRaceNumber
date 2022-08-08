@@ -1,6 +1,7 @@
 {
 	"contracts": {
-		"HelloWorld": "./flow/cadence/contracts/HelloWorld.cdc"
+		"HelloWorld": "./flow/cadence/contracts/HelloWorld.cdc",
+		"RaceNumberContract": "./flow/cadence/contracts/RaceNumberContract.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -13,20 +14,27 @@
 			"key": "c2599f8dea49eff238008744056720cd251a4489e6dffa82cf8f99fbefbbffde"
 		},
 		"testnet-account": {
-			"address": "0x16fa33cab0a7b7c2",
+			"address": "0x83f8ed4318375647",
 			"key": {
 				"type": "hex",
 				"index": 0,
 				"signatureAlgorithm": "ECDSA_P256",
 				"hashAlgorithm": "SHA3_256",
-				"privateKey": "2d162ccbb4523c09558203a6e52ad48cb9553d5fdd3f4d4208e54e8c40d8ce46"
+				"privateKey": "d09f61d016e0fa767a7af5fb35f9a198d7ee37cf36db2fd02a0d596ffde81d0c"
 			}
 		}
 	},
 	"deployments": {
 		"testnet": {
 			"testnet-account": [
-				"HelloWorld"
+				"HelloWorld",
+				"RaceNumberContract"
+			]
+		},
+		"emulator": {
+			"emulator-account": [
+				"HelloWorld",
+				"RaceNumberContract"
 			]
 		}
 	}

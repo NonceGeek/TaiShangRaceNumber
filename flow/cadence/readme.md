@@ -11,7 +11,7 @@ https://testnet-faucet.onflow.org/?key=5f5373a17e38af85d0489f2a7a8ef6ab880a8b8d3
 
 
 🔴️ Store private key safely and don't share with anyone! 
-Private Key      2d162ccbb4523c09558203a6e52ad48cb9553d5fdd3f4d4208e54e8c40d8ce46 
+Private Key      d09f61d016e0fa767a7af5fb35f9a198d7ee37cf36db2fd02a0d596ffde81d0c 
 Public Key       5f5373a17e38af85d0489f2a7a8ef6ab880a8b8d35afcef375d1a9479f291e5e848266dbb29ba2b27e4458d5fb158e86b58cf6d4a9524d90d80e9a199203ab65 
 ```
 
@@ -20,7 +20,7 @@ Public Key       5f5373a17e38af85d0489f2a7a8ef6ab880a8b8d35afcef375d1a9479f291e5
 > https://testnet-faucet.onflow.org/
 
 ```
-0x16fa33cab0a7b7c2
+0x83f8ed4318375647
 ```
 
 3. Deploy it
@@ -30,7 +30,7 @@ Public Key       5f5373a17e38af85d0489f2a7a8ef6ab880a8b8d35afcef375d1a9479f291e5
 
 Deploying 1 contracts for accounts: testnet-account
 
-HelloWorld -> 0x16fa33cab0a7b7c2 (1ce1d8a5ed4d422b1d0d90e8fedf524d4cbb7498368e676696a7f34bb90bce33) 
+HelloWorld -> 0x83f8ed4318375647 (1ce1d8a5ed4d422b1d0d90e8fedf524d4cbb7498368e676696a7f34bb90bce33) 
 
 
 ✨ All contracts deployed successfully
@@ -67,7 +67,7 @@ Events:
     Tx ID       903e12cb7e955de255bfc3011a4ed55812b54ab1e012741fc26f67dd260e48e6
     Values
                 - amount (UFix64): 0.00000204 
-                - from (Address?): 0x16fa33cab0a7b7c2 
+                - from (Address?): 0x83f8ed4318375647 
 
     Index       1
     Type        A.7e60df042a9c0868.FlowToken.TokensDeposited
@@ -93,4 +93,4 @@ Payload (hidden, use --include payload)
 
 # View it on testnet
 
-> https://flow-view-source.com/testnet/account/0x16fa33cab0a7b7c2/contract/HelloWorld
+> https://flow-view-source.com/testnet/account/0x83f8ed4318375647/contract/HelloWorld
