@@ -25,6 +25,20 @@
 				"emulator": "0xf8d6e0586b0a20c7",
 				"testnet": "0x83f8ed4318375647"
 			}
+		},
+		"NonFungibleToken": {
+			"source": "./flow/cadence/contracts/NonFungibleToken.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"testnet": "0x83f8ed4318375647"
+			}
+		},
+		"Racenumber": {
+			"source": "./flow/cadence/contracts/Racenumber.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"testnet": "0x83f8ed4318375647"
+			}
 		}
 	},
 	"networks": {
@@ -52,13 +66,17 @@
 		"emulator": {
 			"emulator-account": [
 				"HelloWorld",
-				"RaceNumberContract"
+				"RaceNumberContract",
+				"NonFungibleToken",
+				"Racenumber"
 			]
 		},
 		"testnet": {
 			"testnet-account": [
 				"HelloWorld",
-				"RaceNumberContract"
+				"RaceNumberContract",
+				"NonFungibleToken",
+				"Racenumber"
 			]
 		}
 	}
