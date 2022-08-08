@@ -1,7 +1,31 @@
 {
+	"emulators": {
+		"default": {
+			"port": 3569,
+			"serviceAccount": "emulator-account"
+		}
+	},
+	"devWallet": {
+		"accessNode": {
+			"endpoint": "http://localhost:8080"
+		},
+		"port": 8701
+	},
 	"contracts": {
-		"HelloWorld": "./flow/cadence/contracts/HelloWorld.cdc",
-		"RaceNumberContract": "./flow/cadence/contracts/RaceNumberContract.cdc"
+		"HelloWorld": {
+			"source": "./flow/cadence/contracts/HelloWorld.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"testnet": "0x83f8ed4318375647"
+			}
+		},
+		"RaceNumberContract": {
+			"source": "./flow/cadence/contracts/RaceNumberContract.cdc",
+			"aliases": {
+				"emulator": "0xf8d6e0586b0a20c7",
+				"testnet": "0x83f8ed4318375647"
+			}
+		}
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -25,14 +49,14 @@
 		}
 	},
 	"deployments": {
-		"testnet": {
-			"testnet-account": [
+		"emulator": {
+			"emulator-account": [
 				"HelloWorld",
 				"RaceNumberContract"
 			]
 		},
-		"emulator": {
-			"emulator-account": [
+		"testnet": {
+			"testnet-account": [
 				"HelloWorld",
 				"RaceNumberContract"
 			]
