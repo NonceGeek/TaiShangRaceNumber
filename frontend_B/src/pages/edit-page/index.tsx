@@ -5,6 +5,7 @@ import './index.less';
 import { Button, Input} from "antd"
 import RectButton from '../../components/rect-button'
 import { useState } from 'react';
+import { createGame } from "../../../../flow/transactions"
 export default function EditPage() {
   const [editData, setEditData] = useState({ // 初始化表单数据
     contractAddress: '',
@@ -21,8 +22,9 @@ export default function EditPage() {
     // TO DO
   }
 
-  const confirm = () => {
+  const confirm = async () => {
     sessionStorage.setItem('gameData', JSON.stringify(editData))
+    await createGame(editData.name, editData.issues, 2234)
     history.push({
       pathname: '/template-select'
     })

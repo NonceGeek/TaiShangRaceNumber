@@ -9,6 +9,8 @@ import { create, CID, IPFSHTTPClient } from "ipfs-http-client"
 import domtoimage from 'dom-to-image';
 import rLogo from '../../assets/icons/r-title.svg'
 import addIcon from '../../assets/icons/add.svg'
+import { getAllGames } from "../../../../flow/scripts"
+import { createGameNFTTemplate } from "../../../../flow/transactions"
 
 import './index.less';
 import {Button, Popover} from "antd"
@@ -27,6 +29,7 @@ export default function ModifyPage(props: any) {
   const [slogan, setSlogan] = useState("Run, Run, Run")
   const [image, setImage] = useState({cid: null as any, path: null as any})
   const [bg, setBg] = useState('linear-gradient(180deg, #4D7FFF 0%, #9D9BFF 99.99%)')
+  const [currentGame, setCurrentGame] = useState(null) as any
   const handleChangeColor = (e: any) => {
     setColor(e.hex)
   }
@@ -73,7 +76,8 @@ export default function ModifyPage(props: any) {
       }
     })
     const added = await ipfs?.add(file)
-    setImage({cid: added?.cid, path: added?.path})
+    // console.log(added.path)
+    createGameNFTTemplate(currentGame.uid, added?.path, props.location.query.type, props.location.query.gameType, slogan)
   }
 
   const handleColorPicker = (anchor: boolean) => {
@@ -138,7 +142,9 @@ export default function ModifyPage(props: any) {
   ] as any
   
   useEffect(() => {
-    console.log(props.location.query.type)
+    getAllGames().then((res: any) => {
+      setCurrentGame(res[res.length - 1])
+    })
   }, [props.location.query.type])
   const gameData = JSON.parse(sessionStorage.getItem('gameData'))
   return (
