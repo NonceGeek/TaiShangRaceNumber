@@ -24,6 +24,7 @@ export default function ModifyPage(props: any) {
   const [textColor, setTextColor] = useState('#ffffff')
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [showTextColor, setShowTextPicker] = useState(false)
+  const [slogan, setSlogan] = useState("Run, Run, Run")
   const [image, setImage] = useState({cid: null as any, path: null as any})
   const [bg, setBg] = useState('linear-gradient(180deg, #4D7FFF 0%, #9D9BFF 99.99%)')
   const handleChangeColor = (e: any) => {
@@ -173,7 +174,7 @@ export default function ModifyPage(props: any) {
               style={{
                 ...typeList[props.location.query.type], 
                 background: bg}}>
-                  <div className='text-center pt-4 text-white ft-s-36'>Run Run Run</div>
+                  <div className='text-center pt-4 text-white ft-s-36'>{slogan}</div>
                   <div className='text-center ft-s-145 text-white'>1213</div>
                   <div className='flex'>
                     <img src={rLogo} alt="" />
@@ -185,6 +186,15 @@ export default function ModifyPage(props: any) {
       </div>
       <div className='modify-right'>
         <div className='right-panel p-16'>
+           <div className='slogan-input mb-6'>
+              <input type="text" placeholder="slogan, 10 words limit" onChange={(e) => {
+                if (e.target.value) {
+                  setSlogan(e.target.value)
+                } else {
+                  setSlogan('Run Run Run')
+                }
+              }} />
+          </div>
           <div className='panel-title text-left ft-s-36 '>Design</div>
           <div className='flex-1 select-bar mt-10'>
             {
