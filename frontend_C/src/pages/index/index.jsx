@@ -18,7 +18,11 @@ import image_11 from "@/assets/images/image_11.jpg";
 import Header from '@/components/Header';
 import TemplateCall from '../../requests/TemplateCall';
 
+import {getAllGames, getGameByGameId, getGameByOwnerAddr, getMintedNFTList, getUserNFTs} from "../../../../flow/scripts"
 export default function index() {
+  getAllGames().then(item=>{
+    console.log(item);
+  })
   return (
     <div>
       <TemplateCall></TemplateCall>
