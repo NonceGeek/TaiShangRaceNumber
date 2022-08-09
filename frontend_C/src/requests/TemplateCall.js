@@ -25,7 +25,7 @@ export default function TemplateCall(){
       console.log("user:",user)
       if(user.addr){
         try{
-          await createGame("test",100,11)
+          // await createGame("test",100,11)
           //await getMintedNFTList(user.addr,29)
           // await mintGameNFT(user.addr,29,20)
           //await mintThemeNFT(user.addr, 29, "blue")
