@@ -1,4 +1,4 @@
-import {useCurrentUser} from "."  //相关配置
+import {useCurrentUser} from "./index"  //相关配置
 import {getAllGames, getGameByGameId, getGameByOwnerAddr, getMintedNFTList, getUserNFTs} from "../../../flow/scripts"
 import {createGame, createGameNFTTemplate, mintGameNFT, mintThemeNFT} from "../../../flow/transactions"
 import { useEffect } from 'react';
@@ -25,7 +25,7 @@ export default function TemplateCall(){
       console.log("user:",user)
       if(user.addr){
         try{
-          // await createGame("test",100,11)
+          let gameUid = await createGame("test222",100,11)
           //await getMintedNFTList(user.addr,29)
           // await mintGameNFT(user.addr,29,20)
           //await mintThemeNFT(user.addr, 29, "blue")

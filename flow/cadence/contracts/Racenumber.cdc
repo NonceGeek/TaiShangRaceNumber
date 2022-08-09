@@ -12,6 +12,7 @@ pub contract Racenumber:NonFungibleToken {
     pub let ThemeNFTCollectionPublicPath:PublicPath
 
     access(contract) var allGames:{UInt64:GameDetail}  //每个主办方办的所有比赛,通过Games的Capability找到每个Game
+    pub event GameCreated(hostAddr:Address,uid:UInt64)
 
     //Game相关Metadata
     pub struct GameDetail{
@@ -97,6 +98,7 @@ pub contract Racenumber:NonFungibleToken {
             let _GameDetail = GameDetail(name:_game.name, timestamp: _game.timestamp,issues:_game.issues, mintedNum:0, uid:_game.id,gameId:_game.gameId,hostAddr:_game.hostAddr,price:_game.price,imageHash:_game.imageHash,templateType:_game.templateType,gameType:_game.gameType,slogan:_game.slogan)
             Racenumber.allGames.insert(key: id, _GameDetail)
             self.totalGames = self.totalGames + 1;
+            emit GameCreated(hostAddr:hostAddr,uid:id)
             return id;
         }
         
