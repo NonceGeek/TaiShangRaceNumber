@@ -4,8 +4,10 @@ import { history } from 'umi'
 import './index.less';
 import { Button, Input} from "antd"
 import RectButton from '../../components/rect-button'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createGame } from "../../../../flow/transactions"
+import { useCurrentUser } from '@/requests/index'
+import dayjs from 'dayjs';
 export default function EditPage() {
   const [editData, setEditData] = useState({ // 初始化表单数据
     contractAddress: '',
@@ -17,14 +19,11 @@ export default function EditPage() {
     issues: null as any
   })
 
-  const deployContract = () => { // 获取合约地址请求
-    console.log(editData)
-    // TO DO
-  }
 
   const confirm = async () => {
     sessionStorage.setItem('gameData', JSON.stringify(editData))
-    await createGame(editData.name, editData.issues, 2234)
+    const date = dayjs(`${editData.year}-${editData.month}-${editData.day} ${editData.time}:00`).toDate().valueOf()
+    await createGame(editData.name, editData.issues, date / 1000)
     history.push({
       pathname: '/template-select'
     })
@@ -44,6 +43,7 @@ export default function EditPage() {
     borderRadius: '10px',
     height: '70px'
   }
+  useCurrentUser()
   return (
     <div className='edit-page'>
       <Header />

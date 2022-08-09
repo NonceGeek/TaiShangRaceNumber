@@ -11,6 +11,7 @@ import rLogo from '../../assets/icons/r-title.svg'
 import addIcon from '../../assets/icons/add.svg'
 import { getAllGames } from "../../../../flow/scripts"
 import { createGameNFTTemplate } from "../../../../flow/transactions"
+import { useCurrentUser } from '@/requests/index'
 
 import './index.less';
 import {Button, Popover} from "antd"
@@ -147,6 +148,7 @@ export default function ModifyPage(props: any) {
     })
   }, [props.location.query.type])
   const gameData = JSON.parse(sessionStorage.getItem('gameData'))
+  useCurrentUser()
   return (
     <div className='modify-page'>
       <div className='modify-left'>
