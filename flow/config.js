@@ -1,9 +1,14 @@
 import { config } from "@onflow/fcl";
-
-config()
-    // .put("accessNode.api", "https://rest-testnet.onflow.org") // This connects us to Flow TestNet
-    // .put("discovery.wallet", "https://fcl-discovery.onflow.org/testnet/authn/") // Allows us to connect to Blocto & Lilico Wallet
-    // Point App at Emulator REST API
-    .put("accessNode.api", "http://localhost:8888")
-    // Point FCL at dev-wallet (default port)
-    .put("discovery.wallet", "http://localhost:8701/fcl/authn")
+if (process.env.Chain_ENV == "testnet"){
+    config({
+        "accessNode.api": "https://rest-testnet.onflow.org",
+        "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn/",
+        "0x01":"0x83f8ed4318375647"
+    })
+} else {
+    config({
+        "accessNode.api": "http://localhost:8888",
+        "discovery.wallet": "http://localhost:8701/fcl/authn",
+        "0x01":"0xf8d6e0586b0a20c7"
+    })
+}
