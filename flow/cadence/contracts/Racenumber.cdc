@@ -23,10 +23,10 @@ pub contract Racenumber:NonFungibleToken {
         pub var gameId:UInt64
         pub var hostAddr:Address
         pub var price:UFix64
-        pub var imageHash:String
-        pub var templateType:String
-        pub var gameType:String
-        pub var slogan:String
+        pub(set) var imageHash:String
+        pub(set) var templateType:String
+        pub(set) var gameType:String
+        pub(set) var slogan:String
         
         init(name:String, timestamp: UInt32,issues:UInt64, mintedNum:Int, uid:UInt64,gameId:UInt64,hostAddr:Address,price:UFix64,imageHash:String,templateType:String,gameType:String,slogan:String) {
             self.hostAddr = hostAddr
@@ -226,6 +226,10 @@ pub contract Racenumber:NonFungibleToken {
         pub fun setImgAndTypes(imageHash:String,templateType:String, gameType:String,slogan:String) {
             let id = self.uuid
             let ref = &Racenumber.allGames[id]! as &GameDetail
+            ref.imageHash = imageHash;
+            ref.gameType = gameType;
+            ref.slogan = slogan;
+            ref.templateType = templateType;
             self.imageHash = imageHash;
             self.gameType = gameType
             self.slogan = slogan

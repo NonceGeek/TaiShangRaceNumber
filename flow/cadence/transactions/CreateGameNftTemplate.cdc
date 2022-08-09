@@ -7,6 +7,5 @@ transaction(gameUId:UInt64,imageHash:String,templateType:String, gameType:String
     gameRef.setImgAndTypes(imageHash:imageHash,templateType:templateType, gameType:gameType,slogan:slogan)
     log("Theme setted!")
   }
-
 }
 
