@@ -1,11 +1,11 @@
-import Racenumber from 0xf8d6e0586b0a20c7
+import Racenumber from 0x01
 
 transaction(hostAddr:Address,eventId:UInt64,type:UInt8) {
 
   prepare(acct: AuthAccount) {
     let hostAcct = getAccount(hostAddr)
-    let eventsRef = acct.getCapability<&Racenumber.Events{Racenumber.EventsPublic}>(Racenumber.EventsPublicPath).borrow() ?? panic("Events resource not found")
-    let eventRef = eventsRef.borrowPublicEventRef(eventId: eventId)
+    let eventsRef = hostAcct.getCapability<&Racenumber.Events>(Racenumber.EventsPublicPath).borrow() ?? panic("Events resource not found")
+    let eventRef = (&eventsRef.events[eventId] as &Racenumber.Event?)!
     if !acct.getCapability<&Racenumber.ThemeCollection{Racenumber.ThemeCollectionPublic}>(Racenumber.ThemeNFTCollectionPublicPath).check(){
         let collection <- Racenumber.createEmptyThemeCollection()   
         acct.save<@Racenumber.ThemeCollection>(<- collection, to: Racenumber.ThemeNFTCollectionStoragePath)
