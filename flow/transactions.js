@@ -13,7 +13,7 @@ config()
 
 
 // 创建比赛
-export async function createGame(name,issues,timestamp) {
+export async function createGame(name, issues, timestamp) {
   const txId = await fcl.mutate({
     cadence: `
         import Racenumber from 0x01
@@ -76,9 +76,9 @@ export async function createGame(name,issues,timestamp) {
   await fcl.tx(txId).onceSealed()
 }
 
-export async function createGameNFTTemplate(gameUId,imageHash,templateType,gameType,slogan){
+export async function createGameNFTTemplate(gameUId, imageHash, templateType, gameType, slogan) {
   const txId = await fcl.mutate({
-      cadence: `
+    cadence: `
         import Racenumber from 0x01
         transaction(gameUId:UInt64,imageHash:String,templateType:String, gameType:String,slogan:String) {
           prepare(acct: AuthAccount) {
@@ -120,9 +120,9 @@ export async function createGameNFTTemplate(gameUId,imageHash,templateType,gameT
   await fcl.tx(txId).onceSealed()
 }
 
-export async function mintGameNFT(hostAddr,gameUId,num){
+export async function mintGameNFT(hostAddr, gameUId, num) {
   const txId = await fcl.mutate({
-      cadence: `
+    cadence: `
         import Racenumber from 0x01
         import FlowToken from 0x01
         import FungibleToken from 0x01
@@ -189,9 +189,9 @@ export async function mintGameNFT(hostAddr,gameUId,num){
   await fcl.tx(txId).onceSealed()
 }
 
-export async function mintThemeNFT(hostAddr,gameUId,background){
+export async function mintThemeNFT(hostAddr, gameUId, background) {
   const txId = await fcl.mutate({
-      cadence: `
+    cadence: `
         import Racenumber from 0x01
         transaction(hostAddr:Address, gameUId:UInt64,background:String) {
 
