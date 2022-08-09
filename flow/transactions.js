@@ -254,3 +254,42 @@ export async function mintThemeNFT(hostAddr, gameUId, background) {
 
   await fcl.tx(txId).onceSealed()
 }
+
+//默认创建余额10000.0
+export async function createFlowtokenVault() {
+  const txId = await fcl.mutate({
+    cadence: `
+        import FlowToken from 0x01
+        import FungibleToken from 0x01
+        transaction() {
+          prepare(acct: AuthAccount) {
+            acct.save(<-FlowToken.createEmptyVault(), to: FlowToken.FlowTokenVaultStorage)
+            acct.link<&FlowToken.Vault{FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance}>(FlowToken.FlowTokenVaultPublic, target: FlowToken.FlowTokenVaultStorage)
+          }
+        }
+        `,
+    args: (arg, t) =>[] ,
+    proposer: fcl.authz,
+    payer: fcl.authz,
+    authorizations: [fcl.authz],
+    limit: 999,
+  })
+
+  console.log('Here is the transaction: ' + txId)
+  fcl.tx(txId).subscribe((res) => {
+    console.log(res)
+    if (res.status === 0 || res.status === 1) {
+      console.log('Pending...');
+    } else if (res.status === 2) {
+      console.log('Finalized...')
+    } else if (res.status === 3) {
+      console.log('Executed...');
+    } else if (res.status === 4) {
+      console.log('Sealed!');
+      setTimeout(() => console.log('Run Transaction'), 2000); // We added this line
+    }
+  })
+
+  await fcl.tx(txId).onceSealed()
+}
+
