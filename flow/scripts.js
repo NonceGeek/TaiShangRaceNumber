@@ -1,6 +1,6 @@
 // 这里都是get方法
 import * as fcl from '@onflow/fcl'
-import { GameDetailClass,ThemeMetaClass } from './types'
+import { GameDetailClass, ThemeMetaClass } from './types'
 
 export async function getAllGames() {
     const resp = await fcl.query({
@@ -13,16 +13,15 @@ export async function getAllGames() {
         args: (arg, t) => []
     })
 
-    let games = Object.entries(resp).map(d=>{
-        let [k,v] = d
-        return new GameDetailClass(v.gameName,v.timestamp, v.issues, v.mintedNum, v.uid, v.gameId, v.hostAddr, v.price, v.imageHash,v.templateType, v.gameType,v.logan)
+    let games = Object.entries(resp).map(d => {
+        let [k, v] = d
+        return new GameDetailClass(v.gameName, v.timestamp, v.issues, v.mintedNum, v.uid, v.gameId, v.hostAddr, v.price, v.imageHash, v.templateType, v.gameType, v.slogan)
     })
-    console.log("getAllGames",games)
+    console.log("getAllGames", games)
     return games
 }
 
-
-export async function getGameByOwnerAddr(addr){
+export async function getGameByOwnerAddr(addr) {
     const resp = await fcl.query({
         cadence: `
         import Racenumber from 0x01
@@ -37,15 +36,15 @@ export async function getGameByOwnerAddr(addr){
         args: (arg, t) => [arg(addr, t.Address)]
     })
 
-    let games = Object.entries(resp).map(d=>{
-        let [k,v] = d
-        return new GameDetailClass(v.gameName,v.timestamp, v.issues, v.mintedNum, v.uid, v.gameId, v.hostAddr, v.price, v.imageHash,v.templateType, v.gameType,v.logan)
+    let games = Object.entries(resp).map(d => {
+        let [k, v] = d
+        return new GameDetailClass(v.gameName, v.timestamp, v.issues, v.mintedNum, v.uid, v.gameId, v.hostAddr, v.price, v.imageHash, v.templateType, v.gameType, v.slogan)
     })
-    console.log("getGameByOwnerAddr>>>",games)
+    console.log("getGameByOwnerAddr>>>", games)
     return games
 }
 
-export async function getGameByGameId(uid){
+export async function getGameByGameId(uid) {
     const v = await fcl.query({
         cadence: `
         import Racenumber from 0x01
@@ -56,14 +55,14 @@ export async function getGameByGameId(uid){
         args: (arg, t) => [arg(parseInt(uid), t.UInt64)]
     })
     let game = null
-    if(v){
-        game = new GameDetailClass(v.gameName,v.timestamp, v.issues, v.mintedNum, v.uid, v.gameId, v.hostAddr, v.price, v.imageHash,v.templateType, v.gameType,v.logan)
-    } 
-    console.log("getGameByGameId>>>",game)
+    if (v) {
+        game = new GameDetailClass(v.gameName, v.timestamp, v.issues, v.mintedNum, v.uid, v.gameId, v.hostAddr, v.price, v.imageHash, v.templateType, v.gameType, v.slogan)
+    }
+    console.log("getGameByGameId>>>", game)
     return game
 }
 
-export async function getMintedNFTList(hostAddr,gameUId){
+export async function getMintedNFTList(hostAddr, gameUId) {
     let resp = await fcl.query({
         cadence: `
         import Racenumber from 0x01
@@ -74,14 +73,14 @@ export async function getMintedNFTList(hostAddr,gameUId){
             return gameRef.getMintedNftList()
         }    
         `,
-        args: (arg, t) => [arg(hostAddr, t.Address),arg(parseInt(gameUId), t.UInt64)]
+        args: (arg, t) => [arg(hostAddr, t.Address), arg(parseInt(gameUId), t.UInt64)]
     })
-    resp = resp.map(d=>parseInt(d))
-    console.log("getMintedNFTList>>>",resp)
+    resp = resp.map(d => parseInt(d))
+    console.log("getMintedNFTList>>>", resp)
     return resp
 }
 
-export async function getUserNFTs(userAddr){
+export async function getUserNFTs(userAddr) {
     let resp = await fcl.query({
         cadence: `
         import Racenumber from 0x01
@@ -107,12 +106,12 @@ export async function getUserNFTs(userAddr){
     })
     console.log(resp)
 
-    let nfts =resp.map(d=>{
+    let nfts = resp.map(d => {
         let v = d.gameDetail
-        let gameDetail = new GameDetailClass(v.gameName,v.timestamp, v.issues, v.mintedNum, v.uid, v.gameId, v.hostAddr, v.price, v.imageHash,v.templateType, v.gameType,v.logan)
-        let nft = new ThemeMetaClass(gameDetail,d.num,d.background)
+        let gameDetail = new GameDetailClass(v.gameName, v.timestamp, v.issues, v.mintedNum, v.uid, v.gameId, v.hostAddr, v.price, v.imageHash, v.templateType, v.gameType, v.slogan)
+        let nft = new ThemeMetaClass(gameDetail, d.num, d.background)
         return nft
     })
-    console.log("getUserNFTs>>>",nfts)
+    console.log("getUserNFTs>>>", nfts)
     return nfts
 }
