@@ -3,16 +3,16 @@ import * as fcl from '@onflow/fcl'
 
 import { config } from "@onflow/fcl";
 
-config()
-  // .put("accessNode.api", "https://rest-testnet.onflow.org") // This connects us to Flow TestNet
-  // .put("discovery.wallet", "https://fcl-discovery.onflow.org/testnet/authn/") // Allows us to connect to Blocto & Lilico Wallet
-  // Point App at Emulator REST API
-  .put("accessNode.api", "http://localhost:8888")
-  // Point FCL at dev-wallet (default port)
-  .put("discovery.wallet", "http://localhost:8701/fcl/authn")
+import CHAIN_CONFIG from "./config.json"
+if (process.env.Chain_ENV == "testnet") {
+    config(CHAIN_CONFIG.testnet)
+} else {
+    config(CHAIN_CONFIG.emulator)
+}
 
 
 // 创建比赛
+//return: GameUId
 export async function createGame(name, issues, timestamp) {
   const txId = await fcl.mutate({
     cadence: `
@@ -73,7 +73,15 @@ export async function createGame(name, issues, timestamp) {
     }
   })
 
-  await fcl.tx(txId).onceSealed()
+  const transaction = await fcl.tx(txId).onceSealed()
+  console.log("createGame transaction>>>", transaction)
+  if(transaction.errorMessage) {
+    throw transaction.errorMessage
+  } else {
+    let gameUId = transaction.events[0].data.uid
+    console.log("gameUid:",gameUId)
+    return gameUId
+  }
 }
 
 export async function createGameNFTTemplate(gameUId, imageHash, templateType, gameType, slogan) {
