@@ -1,9 +1,7 @@
-.modify-page {
-  background-color: #E8E8E8;
+.modify-page-p {
   width: 100%;
   height: 100%;
-  min-height: 1200px;
-  padding: 67px 67px 300px;
+  padding: 0 67px;
   display: grid;
   grid-template-columns: 1fr 1fr;
   .flex {
@@ -13,36 +11,12 @@
     display: flex;
   }
   .modify-left {
-    .top-bar {
-      width: 522px;
-      padding: 34px 0;
-      background-color: #FFFFFF;
-      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
-      border-radius: 12px;
-      margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-    }
+
   }
   .modify-right {
     .right-panel {
-      width: 660px;
-      margin: 0 auto;
       background-color: white;
       border-radius: 10px;
-      box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
-      .slogan-input {
-        font-size: 23.7px;
-        color: #979797;
-        position: relative;
-        border-bottom: 2px solid #0024A1;
-        input{
-            width: 100%;
-            text-align: center;
-            border: 0px;
-            outline: none;
-        }
-      }
       .select-bar {
         .select-box {
           width: 71px;
@@ -64,7 +38,6 @@
   }
   .confirm-btn {
     width: 314px;
-    margin: 0 auto;
     transform: skew(-30deg);
   }
 }
@@ -81,14 +54,13 @@
 }
 .outer-container {
   width: 100%;
+  height: 100%;
   display: flex;
   justify-content: center;
+  margin-top: 206px;
   .template-card-container {
     width: 600px;
     height: 386px;
-    background-size: 100% 100%;
-    background-attachment:fixed;
-    background-repeat: no-repeat;
   }
 }
 .ant-select-selection-item {

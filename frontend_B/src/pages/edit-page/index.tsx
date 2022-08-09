@@ -4,7 +4,10 @@ import { history } from 'umi'
 import './index.less';
 import { Button, Input} from "antd"
 import RectButton from '../../components/rect-button'
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { createGame } from "../../../../flow/transactions"
+import { useCurrentUser } from '@/requests/index'
+import dayjs from 'dayjs';
 export default function EditPage() {
   const [editData, setEditData] = useState({ // 初始化表单数据
     contractAddress: '',
@@ -16,12 +19,11 @@ export default function EditPage() {
     issues: null as any
   })
 
-  const deployContract = () => { // 获取合约地址请求
-    console.log(editData)
-    // TO DO
-  }
 
-  const confirm = () => {
+  const confirm = async () => {
+    sessionStorage.setItem('gameData', JSON.stringify(editData))
+    const date = dayjs(`${editData.year}-${editData.month}-${editData.day} ${editData.time}:00`).toDate().valueOf()
+    await createGame(editData.name, editData.issues, date / 1000)
     history.push({
       pathname: '/template-select'
     })
@@ -41,19 +43,20 @@ export default function EditPage() {
     borderRadius: '10px',
     height: '70px'
   }
+  useCurrentUser()
   return (
     <div className='edit-page'>
       <Header />
       <CustomTitle title={"Let's create information for the game"} />
       <div className='edit-form pb-16'>
-        <div className='mt-60 mb-1 deploy-label'>Add your game contract address</div>
-        <div className='flex deploy-address mb-12'>
+        {/* <div className='mt-60 mb-1 deploy-label'>Add your game contract address</div> */}
+        {/* <div className='flex deploy-address mb-12'>
           <div className='input-warp'><Input value={editData.contractAddress} style={inputLongStyle} onChange={
             (e) => setEditData(editData => { return {...editData, contractAddress: e.target.value}})
             } /></div>
           <div className='btn-wrap'><RectButton onClick={deployContract} btnText={'Quick deploy'} type={'corner'} /></div>
-        </div>
-        <div className='mb-12'>
+        </div> */}
+        <div className='mb-12 mt-60'>
           <div className='mb-1 deploy-label'>Game name</div>
           <div className='input-warp'><Input value={editData.name} style={inputLongStyle} onChange={
             (e) => setEditData(editData => { return {...editData, name: e.target.value}})
@@ -88,7 +91,9 @@ export default function EditPage() {
             (e) => setEditData(editData => { return {...editData, issues: e.target.value}})
           } /></div>
         </div>
-        <div className='btn-wrap confirm-btn mt-20'><RectButton onClick={confirm} btnText={'Confirm'} type={'rect'} /></div>
+        <div className='btn-wrap confirm-btn mt-20'>
+          <RectButton onClick={confirm} btnText={'Confirm'} type={'rect'} />
+        </div>
       </div>
     </div>
   );

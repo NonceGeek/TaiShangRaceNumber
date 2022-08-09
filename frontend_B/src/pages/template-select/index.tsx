@@ -18,7 +18,8 @@ export default function TemplateSelect() {
     history.push({
       pathname: '/modify-page',
       query: {
-        type: type
+        type: type,
+        gameType: gameType
       }
     })
   }
@@ -39,7 +40,7 @@ export default function TemplateSelect() {
         <div className='select-icon icon-margin cursor-pointer' onClick={() => switchType('run')}>
           {gameType === 'run' ? <img src={runActived} alt="" /> : <img src={run} alt="" />}
         </div>
-        <div className='select-icon icon-margin' onClick={() => switchType('ride')}>
+        <div className='select-icon cursor-pointer icon-margin' onClick={() => switchType('ride')}>
         {gameType === 'ride' ? <img src={rideActived} alt="" /> : <img src={ride} alt="" />}
         </div>
       </div>

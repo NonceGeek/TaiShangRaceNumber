@@ -5,10 +5,12 @@ export default defineConfig({
     type: 'none',
   },
   routes: [
-    { path: '/', component: '@/pages/index' },
+    { path: '/', component: '@/pages/home' },
+    { path: '/index', component: '@/pages/index' },
     { path: '/edit-page', component: '@/pages/edit-page' },
     { path: '/template-select', component: '@/pages/template-select' },
-    { path: '/modify-page', component: '@/pages/modify-page' }
+    { path: '/modify-page', component: '@/pages/modify-page' },
+    { path: '/preview-page', component: '@/pages/preview-page' }
   ],
   fastRefresh: {},
   // mfsu:{},
