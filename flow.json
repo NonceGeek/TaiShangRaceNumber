@@ -24,8 +24,8 @@
 				"testnet": "0x83f8ed4318375647"
 			}
 		},
-		"FlowToken":"./flow/cadence/contracts/FlowToken.cdc",
-		"FungibleToken":"./flow/cadence/contracts/FungibleToken.cdc"
+		"FlowToken": "./flow/cadence/contracts/FlowToken.cdc",
+		"FungibleToken": "./flow/cadence/contracts/FungibleToken.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -60,7 +60,9 @@
 		"testnet": {
 			"testnet-account": [
 				"NonFungibleToken",
-				"Racenumber"
+				"Racenumber",
+				"FungibleToken",
+				"FlowToken"
 			]
 		}
 	}
