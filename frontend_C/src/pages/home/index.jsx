@@ -16,10 +16,12 @@ import image_10 from "@/assets/images/image_10.jpg";
 import image_11 from "@/assets/images/image_11.jpg";
 
 import Header from '@/components/Header';
+import TemplateCall from '../../requests/TemplateCall';
 
 export default function index() {
   return (
     <div>
+      <TemplateCall></TemplateCall>
       <div className={styles.main}>
         <header>
           <Header></Header>

@@ -12,20 +12,20 @@
 		"port": 8701
 	},
 	"contracts": {
-		"HelloWorld": {
-			"source": "./flow/cadence/contracts/HelloWorld.cdc",
+		"NonFungibleToken": {
+			"source": "./flow/cadence/contracts/NonFungibleToken.cdc",
 			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7",
 				"testnet": "0x83f8ed4318375647"
 			}
 		},
-		"RaceNumberContract": {
-			"source": "./flow/cadence/contracts/RaceNumberContract.cdc",
+		"Racenumber": {
+			"source": "./flow/cadence/contracts/Racenumber.cdc",
 			"aliases": {
-				"emulator": "0xf8d6e0586b0a20c7",
 				"testnet": "0x83f8ed4318375647"
 			}
-		}
+		},
+		"FlowToken":"./flow/cadence/contracts/FlowToken.cdc",
+		"FungibleToken":"./flow/cadence/contracts/FungibleToken.cdc"
 	},
 	"networks": {
 		"emulator": "127.0.0.1:3569",
@@ -51,14 +51,16 @@
 	"deployments": {
 		"emulator": {
 			"emulator-account": [
-				"HelloWorld",
-				"RaceNumberContract"
+				"NonFungibleToken",
+				"Racenumber",
+				"FungibleToken",
+				"FlowToken"
 			]
 		},
 		"testnet": {
 			"testnet-account": [
-				"HelloWorld",
-				"RaceNumberContract"
+				"NonFungibleToken",
+				"Racenumber"
 			]
 		}
 	}
