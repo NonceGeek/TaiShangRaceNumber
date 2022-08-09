@@ -1,19 +1,15 @@
 // 这里都是get方法
+import * as fcl from '@onflow/fcl'
 
-export const getAllEvents = () => {
+export async function getAllGames() {
+    const resp = await fcl.query({
+        cadence: `
+        import HelloWorld from 0xf8d6e0586b0a20c7
+        
+        `,
+        args: (arg, t) => []
+    })
 
-    return {
-        data: [
-            {
-                name: "1"
-            },
-            {
-                name: "2"
-            }
-        ]
-    }
-}
-
-export const getAllNFTs = (addr) => {
-
+    console.log("Response from our script: " + resp)
+    return {}
 }
