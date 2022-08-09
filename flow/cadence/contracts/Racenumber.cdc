@@ -11,6 +11,8 @@ pub contract Racenumber:NonFungibleToken {
     pub let ThemeNFTCollectionStoragePath: StoragePath
     pub let ThemeNFTCollectionPublicPath:PublicPath
 
+    access(contract) var allGames:{UInt64:GameDetail}  //每个主办方办的所有比赛,通过Games的Capability找到每个Game
+
     //Game相关Metadata
     pub struct GameDetail{
         pub var gameName:String
@@ -25,8 +27,7 @@ pub contract Racenumber:NonFungibleToken {
         pub var templateType:String
         pub var gameType:String
         pub var slogan:String
-
-
+        
         init(name:String, timestamp: UInt32,issues:UInt64, mintedNum:Int, uid:UInt64,gameId:UInt64,hostAddr:Address,price:UFix64,imageHash:String,templateType:String,gameType:String,slogan:String) {
             self.hostAddr = hostAddr
             self.gameName = name
@@ -43,7 +44,6 @@ pub contract Racenumber:NonFungibleToken {
 
         }
     }
-
     //Number NFT相关Metadata
     pub struct NumberNFTMeta{
         pub let id:UInt64
@@ -71,19 +71,18 @@ pub contract Racenumber:NonFungibleToken {
         }
     }
 
-    access(contract) var allGames:{UInt64:GameDetail}  //每个主办方办的所有比赛,通过Games的Capability找到每个Game
-
     //不用触发事件，接口必须
     pub event ContractInitialized()
     pub event Withdraw(id: UInt64, from: Address?)
     pub event Deposit(id: UInt64, to: Address?)
 
-//B端创建比赛的模板
+    //B端创建比赛的模板
     pub resource interface  GamesPublic {
         pub var totalGames:UInt64
         pub fun getAllGames():{UInt64:GameDetail}
         pub fun borrowPublicGameRef(GameUId: UInt64): &Game{GamePublic}
     }
+
     pub resource Games:GamesPublic {
         pub var totalGames:UInt64
         access(contract) var Games: @{UInt64:Game}
@@ -101,7 +100,6 @@ pub contract Racenumber:NonFungibleToken {
             return id;
         }
         
-        //to do修改为正确的返回格式
         pub fun getAllGames():{UInt64:GameDetail} {
             let res: {UInt64:GameDetail} = {}
             for id in self.Games.keys {
@@ -168,6 +166,7 @@ pub contract Racenumber:NonFungibleToken {
             pre {
                 num < self.issues: "This number exceed the issues!"
                 !self.minted.containsKey(num) : "This number has been minted!"
+                flowVault.balance >= self.price : "Your balance is not enough!"
             }
             let addr:Address = recipient.owner!.address;
             assert(!self.mintedAddrs.contains(addr),message:"Your address has minted!")
@@ -265,33 +264,6 @@ pub contract Racenumber:NonFungibleToken {
         }     
     }
 
-    pub resource ThemeNFT:NonFungibleToken.INFT {
-        pub let id:UInt64
-        pub let gameUId:UInt64
-        pub let name:String
-        pub let host:Address
-        pub let num: UInt64
-        pub let imageHash:String
-        pub let templateType:String
-        pub let gameType:String
-        pub let slogan:String
-        pub let background:String
-        pub let collectionCap:Capability<&Collection{CollectionPublic}>
-        init(gameUId:UInt64,name:String,host:Address,num:UInt64,imageHash:String,templateType:String, gameType:String,slogan:String,background:String,collectionCap:Capability<&Collection{CollectionPublic}>){ //num:UInt64,imageHash:String,templateType:String, gameType:String,slogan:String
-            self.id = self.uuid
-            self.gameUId = gameUId
-            self.name = name
-            self.host = host
-            self.num = num
-            self.imageHash = imageHash
-            self.templateType = templateType
-            self.gameType = gameType
-            self.slogan = slogan
-            self.background = background
-            self.collectionCap = collectionCap
-        }
-    }
-
     pub resource interface CollectionPublic{
         pub fun deposit(token:@NonFungibleToken.NFT)
         pub fun getIDs():[UInt64]
@@ -335,6 +307,33 @@ pub contract Racenumber:NonFungibleToken {
         }
         destroy (){
             destroy self.ownedNFTs
+        }
+    }
+
+     pub resource ThemeNFT:NonFungibleToken.INFT {
+        pub let id:UInt64
+        pub let gameUId:UInt64
+        pub let name:String
+        pub let host:Address
+        pub let num: UInt64
+        pub let imageHash:String
+        pub let templateType:String
+        pub let gameType:String
+        pub let slogan:String
+        pub let background:String
+        pub let collectionCap:Capability<&Collection{CollectionPublic}>
+        init(gameUId:UInt64,name:String,host:Address,num:UInt64,imageHash:String,templateType:String, gameType:String,slogan:String,background:String,collectionCap:Capability<&Collection{CollectionPublic}>){ //num:UInt64,imageHash:String,templateType:String, gameType:String,slogan:String
+            self.id = self.uuid
+            self.gameUId = gameUId
+            self.name = name
+            self.host = host
+            self.num = num
+            self.imageHash = imageHash
+            self.templateType = templateType
+            self.gameType = gameType
+            self.slogan = slogan
+            self.background = background
+            self.collectionCap = collectionCap
         }
     }
 
