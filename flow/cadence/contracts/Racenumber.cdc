@@ -1,71 +1,77 @@
 import NonFungibleToken from "./NonFungibleToken.cdc"
 import FlowToken from "./FlowToken.cdc"
 import FungibleToken from "./FungibleToken.cdc"
+
 pub contract Racenumber:NonFungibleToken {
     pub var totalSupply:UInt64
-
-    pub let EventsStoragePath:StoragePath
-    pub let EventsPublicPath:PublicPath
+    pub let GamesStoragePath:StoragePath
+    pub let GamesPublicPath:PublicPath
     pub let NumberNFTCollectionStoragePath: StoragePath
     pub let NumberNFTCollectionPublicPath:PublicPath
     pub let ThemeNFTCollectionStoragePath: StoragePath
     pub let ThemeNFTCollectionPublicPath:PublicPath
 
-    //Event相关Metadata
-    pub struct EventDetail{
+    //Game相关Metadata
+    pub struct GameDetail{
+        pub var gameName:String
+        pub var timestamp:UInt32
+        pub var issues:UInt64
+        pub(set) var mintedNum:Int
+        pub var uid:UInt64
+        pub var gameId:UInt64
         pub var hostAddr:Address
-        pub var name:String
-        pub var totalSupply:UInt64
-        pub var startDate: UInt32
-        pub var id:UInt64
         pub var price:UFix64
-        pub(set) var imgUrl: String;
-        pub(set) var types:[UInt8];
+        pub var imageHash:String
+        pub var templateType:String
+        pub var gameType:String
+        pub var slogan:String
 
-        init(hostAddr:Address,name:String, totalSupply:UInt64, startDate: UInt32, id:UInt64,price:UFix64) {
+
+        init(name:String, timestamp: UInt32,issues:UInt64, mintedNum:Int, uid:UInt64,gameId:UInt64,hostAddr:Address,price:UFix64,imageHash:String,templateType:String,gameType:String,slogan:String) {
             self.hostAddr = hostAddr
-            self.name = name
-            self.totalSupply = totalSupply
-            self.startDate = startDate
-            self.id = id
-            self.imgUrl = ""
-            self.types = []
+            self.gameName = name
+            self.issues = issues
+            self.timestamp = timestamp
+            self.uid = uid
+            self.mintedNum = mintedNum
+            self.gameId = gameId
             self.price = price
+            self.imageHash = imageHash
+            self.templateType = templateType
+            self.gameType = gameType
+            self.slogan = slogan
+
         }
     }
 
     //Number NFT相关Metadata
     pub struct NumberNFTMeta{
         pub let id:UInt64
-        pub let eventId:UInt64
+        pub let GameId:UInt64
         pub let name:String
         pub let host:Address
 
-        init(id:UInt64,eventId:UInt64,name:String, host:Address){
+        init(id:UInt64,GameId:UInt64,name:String, host:Address){
             self.id = id
-            self.eventId = eventId
+            self.GameId = GameId
             self.name = name
             self.host = host
         }
     }
     //theme相关metadata
     pub struct ThemeMeta{
-        pub let id:UInt64
-        pub let eventId:UInt64
-        pub let name:String
-        pub let host:Address
-        pub let type:UInt8
+        pub var gameDetail:GameDetail
+        pub var num:UInt64
+        pub let background:String
 
-        init(id:UInt64,eventId:UInt64,name:String,host:Address,type:UInt8){
-            self.id = id
-            self.eventId = eventId
-            self.name = name
-            self.host = host
-            self.type = type
+        init(gameDetail:GameDetail,num:UInt64,background:String){
+            self.gameDetail = gameDetail
+            self.num = num
+            self.background = background
         }
     }
 
-    access(contract) var allEvents:{UInt64:EventDetail}  //每个主办方办的所有比赛,通过Events的Capability找到每个event
+    access(contract) var allGames:{UInt64:GameDetail}  //每个主办方办的所有比赛,通过Games的Capability找到每个Game
 
     //不用触发事件，接口必须
     pub event ContractInitialized()
@@ -73,139 +79,162 @@ pub contract Racenumber:NonFungibleToken {
     pub event Deposit(id: UInt64, to: Address?)
 
 //B端创建比赛的模板
-    pub resource interface  EventsPublic {
-        pub var totalEvents:UInt64
-        pub fun getAllEvents():{UInt64:String}
-        pub fun borrowPublicEventRef(eventId: UInt64): &Event{EventPublic}
+    pub resource interface  GamesPublic {
+        pub var totalGames:UInt64
+        pub fun getAllGames():{UInt64:GameDetail}
+        pub fun borrowPublicGameRef(GameUId: UInt64): &Game{GamePublic}
     }
-    pub resource Events:EventsPublic {
-        pub var totalEvents:UInt64
-        access(contract) var events: @{UInt64:Event}
-        pub fun createEvent(name:String, totalSupply:UInt64, startDate: UInt32, hostAddr: Address): UInt64 {
-            let eventId = self.totalEvents;
+    pub resource Games:GamesPublic {
+        pub var totalGames:UInt64
+        access(contract) var Games: @{UInt64:Game}
+        pub fun createGame(name:String, issues:UInt64, timestamp: UInt32, hostAddr: Address): UInt64 {
+            let gameId = self.totalGames;
             let price = 1.0
-            let event <- create Event(name:name,totalSupply:totalSupply, startDate: startDate, hostAddr: hostAddr,eventId:eventId,price:price);
-            self.events[eventId] <-! event
-            let id = (&self.events[eventId] as &Event?)!.id
-            assert(!Racenumber.allEvents.containsKey(id), message: "event id is not unique")
-            let _eventDetail = EventDetail(hostAddr:hostAddr,name:name, totalSupply:totalSupply, startDate: startDate,id:id,price:price)
-            Racenumber.allEvents.insert(key: id, _eventDetail)
-            self.totalEvents = self.totalEvents + 1;
-            return eventId;
+            let game <- create Game(name:name,issues:issues, timestamp: timestamp, hostAddr: hostAddr,gameId:gameId,price:price);
+            let id = game.id
+            self.Games[game.id] <-! game
+            assert(!Racenumber.allGames.containsKey(id), message: "Game id is not unique")
+            let _game = (&self.Games[id] as &Game?)!
+            let _GameDetail = GameDetail(name:_game.name, timestamp: _game.timestamp,issues:_game.issues, mintedNum:0, uid:_game.id,gameId:_game.gameId,hostAddr:_game.hostAddr,price:_game.price,imageHash:_game.imageHash,templateType:_game.templateType,gameType:_game.gameType,slogan:_game.slogan)
+            Racenumber.allGames.insert(key: id, _GameDetail)
+            self.totalGames = self.totalGames + 1;
+            return id;
         }
         
         //to do修改为正确的返回格式
-        pub fun getAllEvents():{UInt64:String} {
-            let res: {UInt64: String} = {}
-            for id in self.events.keys {
-                let ref = (&self.events[id] as &Event?)!
-                res[id] = ref.name;
+        pub fun getAllGames():{UInt64:GameDetail} {
+            let res: {UInt64:GameDetail} = {}
+            for id in self.Games.keys {
+                let _game = (&self.Games[id] as &Game?)!
+                let mintedNum = _game.mintedAddrs.length
+                let _GameDetail = GameDetail(name:_game.name, timestamp: _game.timestamp,issues:_game.issues, mintedNum:mintedNum, uid:_game.id,gameId:_game.gameId,hostAddr:_game.hostAddr,price:_game.price,imageHash:_game.imageHash,templateType:_game.templateType,gameType:_game.gameType,slogan:_game.slogan)
+                res[id] = _GameDetail;
             }
             return res
         }
         
-        pub fun borrowEventRef(eventId: UInt64): &Event{
+        pub fun borrowGameRef(GameUId: UInt64): &Game{
           pre {
-                self.events[eventId]!= nil:"Event not exist!"
+                self.Games[GameUId]!= nil:"Game not exist!"
             }
-            return (&self.events[eventId] as &Event?)!
+            return (&self.Games[GameUId] as &Game?)!
         }
-        pub fun borrowPublicEventRef(eventId: UInt64): &Event{EventPublic} {
+        pub fun borrowPublicGameRef(GameUId: UInt64): &Game{GamePublic} {
             pre {
-                self.events[eventId]!= nil:"Event not exist!"
+                self.Games[GameUId]!= nil:"Game not exist!"
             }
-            return (&self.events[eventId] as &Event{EventPublic}?)!
+            return (&self.Games[GameUId] as &Game{GamePublic}?)!
         }
 
         init() {
-            self.totalEvents = 0
-            self.events <- {}
+            self.totalGames = 0
+            self.Games <- {}
         }
 
         destroy()  {
-            destroy self.events
+            destroy self.Games
         }
     }
-    pub resource interface EventPublic{
-        pub fun mintNumber(num:UInt64, recipient: &Collection{NonFungibleToken.CollectionPublic},flowVault:@FlowToken.Vault)
-        pub fun mintTheme(type:UInt8,recipient: &ThemeCollection{ThemeCollectionPublic})
+    pub resource interface GamePublic{
+        pub fun mintNumber(num:UInt64, recipient: &Collection{NonFungibleToken.CollectionPublic}, flowVault:@FlowToken.Vault):UInt64
+        pub fun mintTheme(collectionCap:Capability<&Collection{CollectionPublic}>,gameRef:&Game{GamePublic},num:UInt64,background:String,recipient: &ThemeCollection{ThemeCollectionPublic})
+        pub fun getMintedNftList():[UInt64]
         pub fun canMintTheme(addr:Address) :Bool
+        
         pub var price:UFix64
+        pub var imageHash:String
+        pub var templateType:String
+        pub var gameType:String
+        pub var slogan:String
     }
-    pub resource Event:EventPublic {
+    pub resource Game:GamePublic {
         pub var id:UInt64;
-        pub var totalSupply:UInt64;
+        pub var issues:UInt64;
         access(contract) var minted:{UInt64:Address};
         access(contract) var mintedAddrs:[Address];
         access(contract) var themeMintedAddrs:[Address];
         pub var name: String;
-        pub var startDate: UInt32;
+        pub var timestamp: UInt32;
         pub let hostAddr: Address
-        pub let eventId: UInt64;
-        pub var imgUrl: String;
+        pub let gameId: UInt64;
         pub var price: UFix64;
-        access(contract) var types:[UInt8];
+        pub var imageHash:String
+        pub var templateType:String
+        pub var gameType:String
+        pub var slogan:String
         
         //用户mint
-        pub fun mintNumber(num:UInt64, recipient: &Collection{NonFungibleToken.CollectionPublic}, flowVault:@FlowToken.Vault) {
+        pub fun mintNumber(num:UInt64, recipient: &Collection{NonFungibleToken.CollectionPublic}, flowVault:@FlowToken.Vault):UInt64 {
             pre {
-                num < self.totalSupply: "This number exceed the totalSupply!"
+                num < self.issues: "This number exceed the issues!"
                 !self.minted.containsKey(num) : "This number has been minted!"
-                
             }
             let addr:Address = recipient.owner!.address;
             assert(!self.mintedAddrs.contains(addr),message:"Your address has minted!")
             let token <- create NFT(
                 host: self.hostAddr,
-                eventId: self.eventId,
+                gameUId:self.id,
+                GameId: self.gameId,
                 name: self.name,
                 num:num
                 )
+            let id = (&token as &NFT).id
             let hostVault = getAccount(self.hostAddr).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(FlowToken.FlowTokenVaultPublic).borrow() ?? panic("Host addr Vault not found")
             hostVault.deposit(from: <-flowVault)
             self.minted.insert(key:num,addr);
             self.mintedAddrs.append(addr)
             recipient.deposit(token: <-token)
+            //update Mintednum
+            let _game = &Racenumber.allGames[self.id]! as &GameDetail
+            _game.mintedNum = self.mintedAddrs.length
+            return id
         }
-        pub fun mintTheme(type:UInt8,recipient: &ThemeCollection{ThemeCollectionPublic}){
-            pre{
-                self.types.contains(type):"Theme Type doesn't exist!"
-            }
+        pub fun mintTheme(collectionCap:Capability<&Collection{CollectionPublic}>,gameRef:&Game{GamePublic},num:UInt64,background:String,recipient: &ThemeCollection{ThemeCollectionPublic}){
+
             let addr = recipient.owner!.address;
             assert(!self.themeMintedAddrs.contains(addr),message:"Your address has minted theme NFT!")
-            assert(self.mintedAddrs.contains(addr), message: "You donn't own Number NFT, has no permission to mint!")
-            let nft <- create ThemeNFT(eventId: self.eventId, name: self.name, host: self.hostAddr, type: type, owner: addr)
+            let imageHash = gameRef.imageHash
+            let templateType = gameRef.templateType
+            let gameType = gameRef.gameType
+            let slogan = gameRef.slogan
+            let nft <- create ThemeNFT(gameUId: self.id, name: self.name,host:self.hostAddr,num:num,imageHash:imageHash,templateType:templateType, gameType:gameType,slogan:slogan,background:background,collectionCap:collectionCap)
             self.themeMintedAddrs.append(addr)
             recipient.deposit(token: <-nft)
-
         }
 
         pub fun canMintTheme(addr:Address) :Bool{
             return self.mintedAddrs.contains(addr)
         }
 
-        init(name:String,totalSupply:UInt64, startDate: UInt32, hostAddr: Address, eventId:UInt64,price:UFix64) {
+        init(name:String,issues:UInt64, timestamp: UInt32, hostAddr: Address, gameId:UInt64,price:UFix64) {
             self.name = name;
-            self.totalSupply = totalSupply;
-            self.startDate = startDate;
+            self.issues = issues;
+            self.timestamp = timestamp;
             self.hostAddr = hostAddr;
-            self.eventId = eventId;
+            self.gameId = gameId;
             self.minted = {};
-            self.imgUrl = "";
-            self.types = [];
             self.id = self.uuid
             self.mintedAddrs = []
             self.themeMintedAddrs = []
             self.price = price
+            self.imageHash = ""
+            self.templateType = ""
+            self.gameType = ""
+            self.slogan = ""
+
         }
         
-        pub fun setImgAndTypes(imgUrl:String, types: [UInt8]) {
+        pub fun setImgAndTypes(imageHash:String,templateType:String, gameType:String,slogan:String) {
             let id = self.uuid
-            let ref = &Racenumber.allEvents[id]! as &EventDetail
-            ref.imgUrl = imgUrl
-            ref.types = types
-            self.imgUrl = imgUrl;
-            self.types = types;
+            let ref = &Racenumber.allGames[id]! as &GameDetail
+            self.imageHash = imageHash;
+            self.gameType = gameType
+            self.slogan = slogan
+            self.templateType = templateType;
+        }
+
+        pub fun getMintedNftList():[UInt64]{
+            return self.minted.keys
         }
         
         destroy (){
@@ -215,51 +244,63 @@ pub contract Racenumber:NonFungibleToken {
     }
 
 //////////用户存储部分//////////////////
+    pub resource NFT:NonFungibleToken.INFT {
+        pub let id:UInt64
+        pub let GameId:UInt64
+        pub let gameUId:UInt64
+        pub let name:String
+        pub let host:Address
+        pub let num:UInt64
+        pub let gamesCap: Capability<&Games{GamesPublic}>
+        init(host:Address, gameUId:UInt64,GameId:UInt64, name:String,num:UInt64){
+            //校验
+            self.id = self.uuid
+            self.num = num
+            self.GameId = GameId
+            self.gameUId = gameUId
+            self.name = name
+            self.host = host
+            let gamesRef =  getAccount(host).getCapability<&Games{GamesPublic}>(Racenumber.GamesPublicPath)
+            self.gamesCap = gamesRef
+        }     
+    }
+
+    pub resource ThemeNFT:NonFungibleToken.INFT {
+        pub let id:UInt64
+        pub let gameUId:UInt64
+        pub let name:String
+        pub let host:Address
+        pub let num: UInt64
+        pub let imageHash:String
+        pub let templateType:String
+        pub let gameType:String
+        pub let slogan:String
+        pub let background:String
+        pub let collectionCap:Capability<&Collection{CollectionPublic}>
+        init(gameUId:UInt64,name:String,host:Address,num:UInt64,imageHash:String,templateType:String, gameType:String,slogan:String,background:String,collectionCap:Capability<&Collection{CollectionPublic}>){ //num:UInt64,imageHash:String,templateType:String, gameType:String,slogan:String
+            self.id = self.uuid
+            self.gameUId = gameUId
+            self.name = name
+            self.host = host
+            self.num = num
+            self.imageHash = imageHash
+            self.templateType = templateType
+            self.gameType = gameType
+            self.slogan = slogan
+            self.background = background
+            self.collectionCap = collectionCap
+        }
+    }
+
     pub resource interface CollectionPublic{
         pub fun deposit(token:@NonFungibleToken.NFT)
         pub fun getIDs():[UInt64]
         pub fun borrowNFT(id:UInt64): &NonFungibleToken.NFT
         pub fun borrowNumberNFT(id:UInt64):&NFT
     }
-    pub resource NFT:NonFungibleToken.INFT {
-        pub let id:UInt64
-        pub let eventId:UInt64
-        pub let name:String
-        pub let host:Address
-        pub let eventsCap: Capability<&Events>
-        init(host:Address, eventId:UInt64, name:String,num:UInt64){
-            //校验
-            self.id = num
-            self.eventId = eventId
-            self.name = name
-            self.host = host
-            self.eventsCap = getAccount(host).getCapability<&Events>(Racenumber.EventsPublicPath)
-        }     
-
-        destroy (){
-        }
-
-    }
-
-    pub resource ThemeNFT:NonFungibleToken.INFT {
-        pub let id:UInt64
-        pub let eventId:UInt64
-        pub let name:String
-        pub let host:Address
-        pub let numberNFTCap: Capability<&NFT>
-        pub let type:UInt8
-        init(eventId:UInt64,name:String,host:Address, type:UInt8,owner:Address) {
-            self.id = self.uuid
-            self.eventId = eventId
-            self.name = name
-            self.host = host
-            self.type = type
-            self.numberNFTCap = getAccount(host).getCapability<&NFT>(Racenumber.NumberNFTCollectionPublicPath)  //并不能完全绑定上这个NFT
-        }
-    }
 
     pub resource Collection: NonFungibleToken.Provider, NonFungibleToken.Receiver, NonFungibleToken.CollectionPublic, CollectionPublic {
-        pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}
+        pub var ownedNFTs: @{UInt64: NonFungibleToken.NFT}  //ID实际上对应的是GameId
 
         pub fun withdraw(withdrawID:UInt64):@NonFungibleToken.NFT {
             let token <- self.ownedNFTs.remove(key: withdrawID) ?? panic("You donnot own this NFT")
@@ -269,7 +310,7 @@ pub contract Racenumber:NonFungibleToken {
 
         pub fun deposit(token:@NonFungibleToken.NFT) {
             let nft <- token as! @NFT;
-            let id = nft.id;
+            let id = nft.gameUId;
             self.ownedNFTs[id]<-! nft;
         }
 
@@ -344,31 +385,31 @@ pub contract Racenumber:NonFungibleToken {
         return <- create ThemeCollection()
     }
 
-    pub fun createEmptyEvents():@Events{
-        return <- create Events();
+    pub fun createEmptyGames():@Games{
+        return <- create Games();
     }
 
     //一些查询功能
-    pub fun getAllEvents():{UInt64:EventDetail}{
-        return self.allEvents
+    pub fun getAllGames():{UInt64:GameDetail}{
+        return self.allGames
     }
 
-    pub fun getEventById(id:UInt64):EventDetail{
+    pub fun getGameById(id:UInt64):GameDetail{
         pre {
-            self.allEvents[id] != nil:"event not exist!"
+            self.allGames[id] != nil:"Game not exist!"
         }
-        return self.allEvents[id]!
+        return self.allGames[id]!
     }
 
     init() {
-        self.EventsStoragePath = /storage/EventsStoragePath
-        self.EventsPublicPath = /public/EventsStoragePath
+        self.GamesStoragePath = /storage/GamesStoragePath
+        self.GamesPublicPath = /public/GamesStoragePath
         self.NumberNFTCollectionStoragePath = /storage/NumberNFTCollectionStoragePath
         self.NumberNFTCollectionPublicPath = /public/NumberNFTCollectionPublicPath
         self.ThemeNFTCollectionStoragePath = /storage/ThemeNFTCollectionStoragePath
         self.ThemeNFTCollectionPublicPath = /public/ThemeNFTCollectionPublicPath
         self.totalSupply = 0
-        self.allEvents = {}
+        self.allGames = {}
     }
 
 }
