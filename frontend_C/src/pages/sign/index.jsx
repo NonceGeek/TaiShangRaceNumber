@@ -7,7 +7,13 @@ import Header from "@/components/Header"
 import Number from "@/components/Number"
 import Info from "@/components/Info"
 import Button from "@/components/Button";
+
+import { getAllGames } from '../../../../flow/scripts'
+import { useCurrentUser } from '../../requests'
+
 export default function index(props) {
+  getAllGames()
+
   return (
     <>
       <div className={styles.main}>
