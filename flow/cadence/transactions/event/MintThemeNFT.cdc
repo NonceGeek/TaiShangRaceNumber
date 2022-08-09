@@ -4,8 +4,8 @@ transaction(hostAddr:Address,eventId:UInt64,type:UInt8) {
 
   prepare(acct: AuthAccount) {
     let hostAcct = getAccount(hostAddr)
-    let eventsRef = hostAcct.getCapability<&Racenumber.Events>(Racenumber.EventsPublicPath).borrow() ?? panic("Events resource not found")
-    let eventRef = (&eventsRef.events[eventId] as &Racenumber.Event?)!
+    let eventsRef = acct.getCapability<&Racenumber.Events{Racenumber.EventsPublic}>(Racenumber.EventsPublicPath).borrow() ?? panic("Events resource not found")
+    let eventRef = eventsRef.borrowPublicEventRef(eventId: eventId)
     if !acct.getCapability<&Racenumber.ThemeCollection{Racenumber.ThemeCollectionPublic}>(Racenumber.ThemeNFTCollectionPublicPath).check(){
         let collection <- Racenumber.createEmptyThemeCollection()   
         acct.save<@Racenumber.ThemeCollection>(<- collection, to: Racenumber.ThemeNFTCollectionStoragePath)

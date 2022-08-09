@@ -1,4 +1,6 @@
 import NonFungibleToken from "./NonFungibleToken.cdc"
+import FlowToken from "./FlowToken.cdc"
+import FungibleToken from "./FungibleToken.cdc"
 pub contract Racenumber:NonFungibleToken {
     pub var totalSupply:UInt64
 
@@ -16,10 +18,11 @@ pub contract Racenumber:NonFungibleToken {
         pub var totalSupply:UInt64
         pub var startDate: UInt32
         pub var id:UInt64
+        pub var price:UFix64
         pub(set) var imgUrl: String;
         pub(set) var types:[UInt8];
 
-        init(hostAddr:Address,name:String, totalSupply:UInt64, startDate: UInt32, id:UInt64) {
+        init(hostAddr:Address,name:String, totalSupply:UInt64, startDate: UInt32, id:UInt64,price:UFix64) {
             self.hostAddr = hostAddr
             self.name = name
             self.totalSupply = totalSupply
@@ -27,6 +30,7 @@ pub contract Racenumber:NonFungibleToken {
             self.id = id
             self.imgUrl = ""
             self.types = []
+            self.price = price
         }
     }
 
@@ -61,7 +65,7 @@ pub contract Racenumber:NonFungibleToken {
         }
     }
 
-    pub var allEvents:{UInt64:EventDetail}  //每个主办方办的所有比赛,通过Events的Capability找到每个event
+    access(contract) var allEvents:{UInt64:EventDetail}  //每个主办方办的所有比赛,通过Events的Capability找到每个event
 
     //不用触发事件，接口必须
     pub event ContractInitialized()
@@ -69,17 +73,22 @@ pub contract Racenumber:NonFungibleToken {
     pub event Deposit(id: UInt64, to: Address?)
 
 //B端创建比赛的模板
-    //缺少权限管理, capabilities
-    pub resource Events {
+    pub resource interface  EventsPublic {
         pub var totalEvents:UInt64
-        pub var events: @{UInt64:Event}
+        pub fun getAllEvents():{UInt64:String}
+        pub fun borrowPublicEventRef(eventId: UInt64): &Event{EventPublic}
+    }
+    pub resource Events:EventsPublic {
+        pub var totalEvents:UInt64
+        access(contract) var events: @{UInt64:Event}
         pub fun createEvent(name:String, totalSupply:UInt64, startDate: UInt32, hostAddr: Address): UInt64 {
             let eventId = self.totalEvents;
-            let event <- create Event(name:name,totalSupply:totalSupply, startDate: startDate, hostAddr: hostAddr,eventId:eventId);
+            let price = 1.0
+            let event <- create Event(name:name,totalSupply:totalSupply, startDate: startDate, hostAddr: hostAddr,eventId:eventId,price:price);
             self.events[eventId] <-! event
             let id = (&self.events[eventId] as &Event?)!.id
             assert(!Racenumber.allEvents.containsKey(id), message: "event id is not unique")
-            let _eventDetail = EventDetail(hostAddr:hostAddr,name:name, totalSupply:totalSupply, startDate: startDate,id:id)
+            let _eventDetail = EventDetail(hostAddr:hostAddr,name:name, totalSupply:totalSupply, startDate: startDate,id:id,price:price)
             Racenumber.allEvents.insert(key: id, _eventDetail)
             self.totalEvents = self.totalEvents + 1;
             return eventId;
@@ -94,6 +103,19 @@ pub contract Racenumber:NonFungibleToken {
             }
             return res
         }
+        
+        pub fun borrowEventRef(eventId: UInt64): &Event{
+          pre {
+                self.events[eventId]!= nil:"Event not exist!"
+            }
+            return (&self.events[eventId] as &Event?)!
+        }
+        pub fun borrowPublicEventRef(eventId: UInt64): &Event{EventPublic} {
+            pre {
+                self.events[eventId]!= nil:"Event not exist!"
+            }
+            return (&self.events[eventId] as &Event{EventPublic}?)!
+        }
 
         init() {
             self.totalEvents = 0
@@ -104,22 +126,28 @@ pub contract Racenumber:NonFungibleToken {
             destroy self.events
         }
     }
-
-    pub resource Event {
+    pub resource interface EventPublic{
+        pub fun mintNumber(num:UInt64, recipient: &Collection{NonFungibleToken.CollectionPublic},flowVault:@FlowToken.Vault)
+        pub fun mintTheme(type:UInt8,recipient: &ThemeCollection{ThemeCollectionPublic})
+        pub fun canMintTheme(addr:Address) :Bool
+        pub var price:UFix64
+    }
+    pub resource Event:EventPublic {
+        pub var id:UInt64;
         pub var totalSupply:UInt64;
-        pub(set) var minted:{UInt64:Address};
-        pub(set) var mintedAddrs:[Address];
-        pub(set) var themeMintedAddrs:[Address];
+        access(contract) var minted:{UInt64:Address};
+        access(contract) var mintedAddrs:[Address];
+        access(contract) var themeMintedAddrs:[Address];
         pub var name: String;
         pub var startDate: UInt32;
-        pub var hostAddr: Address
+        pub let hostAddr: Address
         pub let eventId: UInt64;
         pub var imgUrl: String;
-        pub var types:[UInt8];
-        pub var id:UInt64;
+        pub var price: UFix64;
+        access(contract) var types:[UInt8];
         
         //用户mint
-        pub fun mintNumber(num:UInt64, recipient: &Collection{NonFungibleToken.CollectionPublic}) {
+        pub fun mintNumber(num:UInt64, recipient: &Collection{NonFungibleToken.CollectionPublic}, flowVault:@FlowToken.Vault) {
             pre {
                 num < self.totalSupply: "This number exceed the totalSupply!"
                 !self.minted.containsKey(num) : "This number has been minted!"
@@ -133,6 +161,8 @@ pub contract Racenumber:NonFungibleToken {
                 name: self.name,
                 num:num
                 )
+            let hostVault = getAccount(self.hostAddr).getCapability<&FlowToken.Vault{FungibleToken.Receiver}>(FlowToken.FlowTokenVaultPublic).borrow() ?? panic("Host addr Vault not found")
+            hostVault.deposit(from: <-flowVault)
             self.minted.insert(key:num,addr);
             self.mintedAddrs.append(addr)
             recipient.deposit(token: <-token)
@@ -154,7 +184,7 @@ pub contract Racenumber:NonFungibleToken {
             return self.mintedAddrs.contains(addr)
         }
 
-        init(name:String,totalSupply:UInt64, startDate: UInt32, hostAddr: Address, eventId:UInt64) {
+        init(name:String,totalSupply:UInt64, startDate: UInt32, hostAddr: Address, eventId:UInt64,price:UFix64) {
             self.name = name;
             self.totalSupply = totalSupply;
             self.startDate = startDate;
@@ -166,6 +196,7 @@ pub contract Racenumber:NonFungibleToken {
             self.id = self.uuid
             self.mintedAddrs = []
             self.themeMintedAddrs = []
+            self.price = price
         }
         
         pub fun setImgAndTypes(imgUrl:String, types: [UInt8]) {
@@ -315,6 +346,18 @@ pub contract Racenumber:NonFungibleToken {
 
     pub fun createEmptyEvents():@Events{
         return <- create Events();
+    }
+
+    //一些查询功能
+    pub fun getAllEvents():{UInt64:EventDetail}{
+        return self.allEvents
+    }
+
+    pub fun getEventById(id:UInt64):EventDetail{
+        pre {
+            self.allEvents[id] != nil:"event not exist!"
+        }
+        return self.allEvents[id]!
     }
 
     init() {
