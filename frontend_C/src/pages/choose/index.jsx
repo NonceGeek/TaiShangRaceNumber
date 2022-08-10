@@ -10,7 +10,8 @@ import Card from '@/components/Card';
 import Button from '@/components/Button';
 
 export default function index() {
-  const [RaceNumber,setRaceNumber] = useState("1000")
+  const [RaceNumber,setRaceNumber] = useState("请选择")
+
   const cards = [];
   for (let i = 1000; i < 1050; i++) {
     cards.push({ number: i, status: true });

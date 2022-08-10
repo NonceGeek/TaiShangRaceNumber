@@ -3,16 +3,16 @@ import * as fcl from '@onflow/fcl'
 
 import { config } from "@onflow/fcl";
 
-config()
-  // .put("accessNode.api", "https://rest-testnet.onflow.org") // This connects us to Flow TestNet
-  // .put("discovery.wallet", "https://fcl-discovery.onflow.org/testnet/authn/") // Allows us to connect to Blocto & Lilico Wallet
-  // Point App at Emulator REST API
-  .put("accessNode.api", "http://localhost:8888")
-  // Point FCL at dev-wallet (default port)
-  .put("discovery.wallet", "http://localhost:8701/fcl/authn")
+import CHAIN_CONFIG from "./config.json"
+if (process.env.Chain_ENV == "testnet") {
+    config(CHAIN_CONFIG.testnet)
+} else {
+    config(CHAIN_CONFIG.emulator)
+}
 
 
 // 创建比赛
+//return: GameUId
 export async function createGame(name, issues, timestamp) {
   const txId = await fcl.mutate({
     cadence: `
@@ -73,7 +73,15 @@ export async function createGame(name, issues, timestamp) {
     }
   })
 
-  await fcl.tx(txId).onceSealed()
+  const transaction = await fcl.tx(txId).onceSealed()
+  console.log("createGame transaction>>>", transaction)
+  if(transaction.errorMessage) {
+    throw transaction.errorMessage
+  } else {
+    let gameUId = transaction.events[0].data.uid
+    console.log("gameUid:",gameUId)
+    return gameUId
+  }
 }
 
 export async function createGameNFTTemplate(gameUId, imageHash, templateType, gameType, slogan) {
@@ -246,3 +254,42 @@ export async function mintThemeNFT(hostAddr, gameUId, background) {
 
   await fcl.tx(txId).onceSealed()
 }
+
+//默认创建余额10000.0
+export async function createFlowtokenVault() {
+  const txId = await fcl.mutate({
+    cadence: `
+        import FlowToken from 0x01
+        import FungibleToken from 0x01
+        transaction() {
+          prepare(acct: AuthAccount) {
+            acct.save(<-FlowToken.createEmptyVault(), to: FlowToken.FlowTokenVaultStorage)
+            acct.link<&FlowToken.Vault{FungibleToken.Provider, FungibleToken.Receiver, FungibleToken.Balance}>(FlowToken.FlowTokenVaultPublic, target: FlowToken.FlowTokenVaultStorage)
+          }
+        }
+        `,
+    args: (arg, t) =>[] ,
+    proposer: fcl.authz,
+    payer: fcl.authz,
+    authorizations: [fcl.authz],
+    limit: 999,
+  })
+
+  console.log('Here is the transaction: ' + txId)
+  fcl.tx(txId).subscribe((res) => {
+    console.log(res)
+    if (res.status === 0 || res.status === 1) {
+      console.log('Pending...');
+    } else if (res.status === 2) {
+      console.log('Finalized...')
+    } else if (res.status === 3) {
+      console.log('Executed...');
+    } else if (res.status === 4) {
+      console.log('Sealed!');
+      setTimeout(() => console.log('Run Transaction'), 2000); // We added this line
+    }
+  })
+
+  await fcl.tx(txId).onceSealed()
+}
+

@@ -6,7 +6,15 @@ module.exports = {
     theme: {
       fontFamily: {
         'EBRIMA': ['EBRIMA']
-      }
+      },
+      extend: {
+        spacing: {
+          'main': '1280px',
+        },
+        colors: {
+          'blue': '#0012BF',
+        },
+      },
     },
     variants: {
       extend: {},

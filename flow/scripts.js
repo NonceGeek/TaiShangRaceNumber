@@ -1,6 +1,14 @@
 // 这里都是get方法
 import * as fcl from '@onflow/fcl'
 import { GameDetailClass, ThemeMetaClass } from './types'
+import { config } from "@onflow/fcl";
+import CHAIN_CONFIG from "./config.json"
+if (process.env.Chain_ENV == "testnet") {
+    config(CHAIN_CONFIG.testnet)
+} else {
+    config(CHAIN_CONFIG.emulator)
+}
+
 
 export async function getAllGames() {
     const resp = await fcl.query({

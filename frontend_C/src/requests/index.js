@@ -15,12 +15,11 @@ if (process.env.Chain_ENV == "testnet") {
     })
 }
 
-
 export function useCurrentUser() {
     const [user, setUser] = useState({ loggedIn: false })
-
     useEffect(() => {
         fcl.currentUser().subscribe(setUser)
+        console.log(user);
     }, [])
     return [user, user?.addr != null, fcl.authenticate, fcl.unauthenticate]
 }
