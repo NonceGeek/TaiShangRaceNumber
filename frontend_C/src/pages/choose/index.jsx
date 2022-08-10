@@ -79,7 +79,7 @@ export default function index(props) {
                 <img src={Price} alt="" />
                 <span>50</span>
               </div>
-              <Button content="Minte" mintNFT={RaceNumber} mint={mint}></Button>
+              <Button content="Mint" mintNFT={RaceNumber} mint={mint}></Button>
             </div>
           </div>
         </main>
