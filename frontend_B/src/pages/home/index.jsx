@@ -167,10 +167,10 @@ export default function IndexPage() {
         <img src={SlogonImg} className='w-full' alt="R" />
         <div id="buttons" className='-mt-16 mr-16 flex justify-end items-center'>
           <div className='rect-button w-64'>
-            <RectButton btnText={'Explore'} type={'rect'} />
+            <RectButton btnText={'Explore'} type={'rect'} onClick={() => history.push({ pathname: '/index' })} />
           </div>
           <div className='rect-button w-64 ml-20'>
-            <RectButton onClick={() => history.push({ pathname: '/index' })} btnText={'Create games'} type={'rect'} />
+            <RectButton onClick={() => history.push({ pathname: '/edit-page' })} btnText={'Create games'} type={'rect'} />
           </div>
         </div>
       </div>

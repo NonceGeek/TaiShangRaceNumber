@@ -45,6 +45,7 @@ export default class CustomTitle extends React.Component<any>{
       if (this.props.onClick) {
         this.props.onClick('click')
       } else {
+        console.log(this.props.btnText)
         if (this.props.btnText === 'Create games') {
           history.push({
             pathname: '/edit-page'
