@@ -45,13 +45,13 @@ export default function index() {
             <div className={styles.gameName}>RaceNumber Marathon</div>
             <div className={styles.no}>NO.</div>
             <div className={styles.number}>{RaceNumber?RaceNumber:'0000'}</div>
-            <div className={styles.minte}>
+            <div className={styles.mint}>
               <div className={styles.price}>
                 Price
                 <img src={Price} alt="" />
                 <span>50</span>
               </div>
-              <Button content="Minte" url={`/edit?number=${RaceNumber}`}></Button>
+              <Button content="mint" url={`/edit?number=${RaceNumber}`}></Button>
             </div>
           </div>
         </main>
