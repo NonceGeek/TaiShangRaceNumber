@@ -1,6 +1,7 @@
 import './index.less'
 import React from 'react';
-import { Button } from "antd"
+import { Button} from "antd"
+import { history } from 'umi'
 
 const btnStyles = {
   rect: {
@@ -35,19 +36,32 @@ const btnStyles = {
 
 export default class CustomTitle extends React.Component<any>{
 
-  constructor(props: any) {
-    super(props);
-  }
+    constructor(props: any) {
+      super(props);
+      console.log(props)
+    }
 
-  click = () => {
-    this.props.onClick('click')
+    click = () => {
+      if (this.props.onClick) {
+        this.props.onClick('click')
+      } else {
+        if (this.props.btnText === 'Create games') {
+          history.push({
+            pathname: '/edit-page'
+          })
+        } else if (this.props.btnText === 'Explore') {
+          history.push({
+            pathname: '/index'
+          })
+        }
+      }
+    }
+    
+    render() {
+      return (
+        <div className=''>
+          <Button onClick={this.click} style={btnStyles[this.props.type]}><span className='span' style={{transform: this.props.type === 'rect' ? 'skew(30deg)' : ''}}>{this.props.btnText}</span></Button>
+        </div>
+      )
+    }
   }
-
-  render() {
-    return (
-      <div className=''>
-        <Button onClick={this.click} style={btnStyles[this.props.type]}><span className='span' style={{ transform: this.props.type === 'rect' ? 'skew(30deg)' : '' }}>{this.props.btnText}</span></Button>
-      </div>
-    )
-  }
-}

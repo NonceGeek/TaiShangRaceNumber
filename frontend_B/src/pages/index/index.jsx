@@ -18,7 +18,13 @@ import createImg from "@/assets/icons/create.png";
 
 import Header from '../../components/header'
 import Number from "../../components/Number"
+import { history } from 'umi'
 export default function index() {
+  const jump = () => {
+    history.push({
+        pathname: '/edit-page'
+    })
+  }
   return (
     <div>
       <div className={styles.main}>
@@ -41,7 +47,7 @@ export default function index() {
                 <div className={styles.title}>Event management</div>
                 <div className={styles.image1}>
                     <Number title="Run! Run! Run!" number="1213" topic="RaceNumber Marathon 2024" price={50} time={30}></Number>
-                    <div className='flex flex-col items-center'>
+                    <div className='ml-10 mt-8 cursor-pointer flex flex-col items-center' onClick={jump}>
                         <img className='' src={createImg} alt="create-game" />
                         <span>Create a game</span>
                     </div>
