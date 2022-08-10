@@ -92,9 +92,9 @@ const events = [
 
 export default function IndexPage() {
   const [showMask, setShowMask] = useState(false)
-  const jumpTo = () => {
+  const jumpTo = (path: string) => {
     history.push({
-      pathname: '/edit-page'
+      pathname: path
     })
   }
   return (
@@ -126,10 +126,10 @@ export default function IndexPage() {
         <img src={SlogonImg} className='w-full' alt="R" />
         <div id="buttons" className='-mt-16 mr-16 flex justify-end items-center'>
           <div className='rect-button w-64'>
-            <RectButton btnText={'Explore'} type={'rect'} onClick={jumpTo} />
+            <RectButton btnText={'Explore'} type={'rect'} onClick={jumpTo('/index')} />
           </div>
           <div className='rect-button w-64 ml-20'>
-            <RectButton btnText={'Create games'} type={'rect'} onClick={jumpTo} />
+            <RectButton btnText={'Create games'} type={'rect'} onClick={jumpTo('/edit-page')} />
           </div>
         </div>
       </div>
