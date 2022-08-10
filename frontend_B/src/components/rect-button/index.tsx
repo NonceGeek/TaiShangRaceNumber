@@ -1,6 +1,6 @@
 import './index.less'
 import React from 'react';
-import { Button} from "antd"
+import { Button } from "antd"
 
 const btnStyles = {
   rect: {
@@ -35,19 +35,19 @@ const btnStyles = {
 
 export default class CustomTitle extends React.Component<any>{
 
-    constructor(props: any) {
-      super(props);
-    }
-
-    click = () => {
-      this.props.onClick('click')
-    }
-    
-    render() {
-      return (
-        <div className=''>
-          <Button onClick={this.click} style={btnStyles[this.props.type]}><span className='span' style={{transform: this.props.type === 'rect' ? 'skew(30deg)' : ''}}>{this.props.btnText}</span></Button>
-        </div>
-      )
-    }
+  constructor(props: any) {
+    super(props);
   }
+
+  click = () => {
+    this.props.onClick('click')
+  }
+
+  render() {
+    return (
+      <div className=''>
+        <Button onClick={this.click} style={btnStyles[this.props.type]}><span className='span' style={{ transform: this.props.type === 'rect' ? 'skew(30deg)' : '' }}>{this.props.btnText}</span></Button>
+      </div>
+    )
+  }
+}
