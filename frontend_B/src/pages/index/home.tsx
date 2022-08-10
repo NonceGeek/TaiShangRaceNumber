@@ -89,15 +89,14 @@ const events = [
   },
 ]
 
-const jump = () => {
-  history.push({
-    pathname: '/edit-page'
-  })
-}
 
 export default function IndexPage() {
   const [showMask, setShowMask] = useState(false)
-  
+  const jumpTo = () => {
+    history.push({
+      pathname: '/edit-page'
+    })
+  }
   return (
     <div id='index' className='w-screen flex flex-col items-center relative'>
       {/* header */}
@@ -127,10 +126,10 @@ export default function IndexPage() {
         <img src={SlogonImg} className='w-full' alt="R" />
         <div id="buttons" className='-mt-16 mr-16 flex justify-end items-center'>
           <div className='rect-button w-64'>
-            <RectButton btnText={'Explore'} type={'rect'} />
+            <RectButton btnText={'Explore'} type={'rect'} onClick={jumpTo} />
           </div>
           <div className='rect-button w-64 ml-20'>
-            <RectButton btnText={'Create games'} type={'rect'} />
+            <RectButton btnText={'Create games'} type={'rect'} onClick={jumpTo} />
           </div>
         </div>
       </div>
@@ -170,7 +169,7 @@ export default function IndexPage() {
                 </div>
               </div>
               <div className='rect-button w-64 ml-24'>
-                <RectButton btnText={'Explore'} type={'rect'} />
+                <RectButton btnText={'Explore'} type={'rect'} onClick={jumpTo} />
               </div>
             </div>
           </SwiperSlide>

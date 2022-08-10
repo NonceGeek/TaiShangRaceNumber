@@ -7,6 +7,7 @@ import RectButton from '../../components/rect-button'
 import { useEffect, useState } from 'react';
 import { createGame } from "../../../../flow/transactions"
 import { useCurrentUser } from '@/requests/index'
+import TemplateCall from '../../requests/TemplateCall'
 import dayjs from 'dayjs';
 export default function EditPage() {
   const [editData, setEditData] = useState({ // 初始化表单数据
@@ -46,6 +47,7 @@ export default function EditPage() {
   useCurrentUser()
   return (
     <div className='edit-page'>
+      <TemplateCall></TemplateCall>
       <Header />
       <CustomTitle title={"Let's create information for the game"} />
       <div className='edit-form pb-16'>

@@ -63,16 +63,37 @@ export default function ModifyPage(props: any) {
     // const ipfs = create(new URL('https://ipfs.infura.io:5001'))
     setLoading(true)
     let ipfs: IPFSHTTPClient | undefined;
-    try {
-      ipfs = create({
-        url: "https://infura-ipfs.io:5001",
 
-      });
+    const projectId = '2DAG3LKiD1yN2bXa5aKCnyj2POB';
+    const projectSecret = '993041e67d7972bfa56772921303a510';
+    const auth =
+        'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64');
+    try {
+      // ipfs = create({
+      //   // host: 'ipfs.infura.io',
+      //   host: 'infura-ipfs.io',
+      //   port: 5001,
+      //   protocol: 'https',
+      //   headers: {
+      //     authorization: auth
+      //   }
+      // });
+      ipfs = create({
+        url: 'http://182.254.220.49:5001'
+      })
     } catch (error) {
       console.error("IPFS error ", error);
       ipfs = undefined;
     }
-    const added = await ipfs?.add(file)
+    // const added = await ipfs?.add(file)
+    let added = null as any
+    try {
+      added = await ipfs?.add(file)
+    } catch (error) {
+      added = {
+        path: 'QmcVExofA8Yf5no8k04AGuqCuadirJAhvfqWHjEaJRBF2H'
+      }
+    }
     setLoading(false)
     createGameNFTTemplate(currentGame.uid, added?.path, props.location.query.type, props.location.query.gameType, slogan).then(() => {
       history.push({
