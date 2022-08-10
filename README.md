@@ -7,7 +7,7 @@ The NFT is tied to the runner's behavior, which is stored as JSON on the IPFS/Ar
 ​	All in all, Racenumber takes NFT of number plates as the core, empowers the real industry, connects the data on and off the chain, and reconstructs the whole large-scale race organization and management system, and is also an innovative practice of combining abstract NFT paradigm and traditional NFT.
 
 - [Online Sites](https://racenumber.xyz)
-- [Testnet address](https://flow-view-source.com/testnet/account/0x83f8ed4318375647/contract/Racenumber
+- [Testnet address](https://flow-view-source.com/testnet/account/0x83f8ed4318375647/contract/Racenumber)
 - [Pitch Deck & Demo Video](https://github.com/hqwangningbo/web3jam-2022-summer/tree/main/submissions/issue-32/docs) 
 
 ## 0x01 Installation
