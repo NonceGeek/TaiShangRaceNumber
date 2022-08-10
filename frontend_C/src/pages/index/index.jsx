@@ -17,9 +17,11 @@ import image_11 from "@/assets/images/image_11.jpg";
 
 import Header from '@/components/Header';
 import TemplateCall from '../../requests/TemplateCall';
+import CHAIN_CONFIG from '../../../../flow/config.json'
 
 import {getAllGames, getGameByGameId, getGameByOwnerAddr, getMintedNFTList, getUserNFTs} from "../../../../flow/scripts"
 export default function index() {
+  console.log(CHAIN_CONFIG)
   getAllGames().then(item=>{
     console.log(item);
   })

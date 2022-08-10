@@ -1,7 +1,10 @@
 import { config } from "@onflow/fcl";
 import * as fcl from "@onflow/fcl";
 import { useEffect, useState } from 'react'
-if (process.env.Chain_ENV == "testnet") {
+
+import CHAIN_CONFIG from "../../../flow/config.json"
+
+if (CHAIN_CONFIG.env== "testnet") {
   config({
     "accessNode.api": "https://rest-testnet.onflow.org",
     "discovery.wallet": "https://fcl-discovery.onflow.org/testnet/authn/",
