@@ -47,9 +47,9 @@ export default function index() {
                 <div className={styles.title}>Event management</div>
                 <div className={styles.image1}>
                     <Number title="Run! Run! Run!" number="1213" topic="RaceNumber Marathon 2024" price={50} time={30}></Number>
-                    <div className='ml-10 mt-8 cursor-pointer flex flex-col items-center' onClick={jump}>
-                        <img className='' src={createImg} alt="create-game" />
-                        <span>Create a game</span>
+                    <div className='box-border ml-6 mt-6 mb-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer flex flex-col items-center' style={{width: '254.07px'}} onClick={jump}>
+                        <img className='mt-12' style={{width: '50%', height: 'auto'}} src={createImg} alt="create-game" />
+                        <span className='mt-24 flex items-end text-2xl font-bold text-gray-400'>Create a game</span>
                     </div>
                 </div>
             </div>

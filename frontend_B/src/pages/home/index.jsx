@@ -122,8 +122,12 @@ export default function IndexPage() {
   }
 
   const getUserBalance = async () => {
-    await createFlowtokenVault()
-    await getBalance(userAddr)
+    try {
+      await getBalance(userAddr)
+    } catch (error) {
+      await createFlowtokenVault()
+      await getBalance(userAddr)
+    }
   }
 
   return (
