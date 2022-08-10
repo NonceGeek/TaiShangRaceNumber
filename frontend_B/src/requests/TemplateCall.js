@@ -37,7 +37,7 @@ export default function TemplateCall(){
       }
     },[user])
     //////////////////////////////
-    return <div>
+    return <div style={{visibility: 'hidden'}}>
       Template Call 
       User addr: {user.addr}
       </div>
