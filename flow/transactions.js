@@ -4,7 +4,7 @@ import * as fcl from '@onflow/fcl'
 import { config } from "@onflow/fcl";
 
 import CHAIN_CONFIG from "./config.json"
-if (process.env.Chain_ENV == "testnet") {
+if (CHAIN_CONFIG.env == "testnet") {
     config(CHAIN_CONFIG.testnet)
 } else {
     config(CHAIN_CONFIG.emulator)
