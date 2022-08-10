@@ -123,3 +123,20 @@ export async function getUserNFTs(userAddr) {
     console.log("getUserNFTs>>>", nfts)
     return nfts
 }
+
+export async function getBalance(addr) {
+    const resp = await fcl.query({
+        cadence: `
+            import FlowToken from 0x01
+            import FungibleToken from 0x01
+            pub fun main(addr:Address): UFix64{
+                let acct = getAccount(addr).getCapability<&FlowToken.Vault{FungibleToken.Balance}>(FlowToken.FlowTokenVaultPublic).borrow() ?? panic("VAult not found")
+                return acct.balance
+            }
+        `,
+        args: (arg, t) => [arg(addr, t.Address)]
+    })
+
+    console.log("getBalance", resp)
+    return resp
+}
