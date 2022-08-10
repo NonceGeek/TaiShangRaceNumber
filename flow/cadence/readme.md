@@ -184,4 +184,4 @@ Payload (hidden, use --include payload)
 
 # View it on testnet
 
-> https://flow-view-source.com/testnet/account/0x83f8ed4318375647/contract/HelloWorld
+> https://flow-view-source.com/testnet/account/0x83f8ed4318375647/contract/Racenumber
