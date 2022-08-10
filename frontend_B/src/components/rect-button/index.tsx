@@ -45,9 +45,15 @@ export default class CustomTitle extends React.Component<any>{
       if (this.props.onClick) {
         this.props.onClick('click')
       } else {
-        history.push({
-          pathname: '/edit-page'
-        })
+        if (this.props.btnText === 'Create games') {
+          history.push({
+            pathname: '/edit-page'
+          })
+        } else if (this.props.btnText === 'Explore') {
+          history.push({
+            pathname: '/index'
+          })
+        }
       }
     }
     
