@@ -3,6 +3,7 @@
   width: 100%;
   height: 100%;
   min-height: 1200px;
+  overflow-y: hidden;
   padding: 67px 67px 300px;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -93,4 +94,16 @@
 }
 .ant-select-selection-item {
   font-size: 20px !important;
+}
+.spin {
+  width: 100%;
+  position: absolute;
+  height: 100%;
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+  z-index: 9;
 }

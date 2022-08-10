@@ -2,8 +2,8 @@ import { history } from 'umi'
 import arrow from '../../assets/icons/arrow.svg'
 import text from '../../assets/icons/text.svg'
 import { SketchPicker } from 'react-color'
-import { Select } from 'antd';
-import { BulbFilled, DownOutlined } from '@ant-design/icons'
+import { Select, Spin } from 'antd';
+import { DownOutlined } from '@ant-design/icons'
 import RectButton from '../../components/rect-button'
 import { create, CID, IPFSHTTPClient } from "ipfs-http-client"
 import domtoimage from 'dom-to-image';
@@ -28,7 +28,8 @@ export default function ModifyPage(props: any) {
   const [showColorPicker, setShowColorPicker] = useState(false)
   const [showTextColor, setShowTextPicker] = useState(false)
   const [slogan, setSlogan] = useState("Run, Run, Run")
-  const [image, setImage] = useState({cid: null as any, path: null as any})
+  // const [image, setImage] = useState({cid: null as any, path: null as any})
+  const [loading, setLoading] = useState(false)
   const [bg, setBg] = useState('linear-gradient(180deg, #4D7FFF 0%, #9D9BFF 99.99%)')
   const [currentGame, setCurrentGame] = useState(null) as any
   const handleChangeColor = (e: any) => {
@@ -60,6 +61,7 @@ export default function ModifyPage(props: any) {
 
   const addFile = async (file: any) => {
     // const ipfs = create(new URL('https://ipfs.infura.io:5001'))
+    setLoading(true)
     let ipfs: IPFSHTTPClient | undefined;
     try {
       ipfs = create({
@@ -70,15 +72,16 @@ export default function ModifyPage(props: any) {
       console.error("IPFS error ", error);
       ipfs = undefined;
     }
-    history.push({
-      pathname: '/preview-page',
-      query: {
-        type: props.location.query.type
-      }
-    })
     const added = await ipfs?.add(file)
-    // console.log(added.path)
-    createGameNFTTemplate(currentGame.uid, added?.path, props.location.query.type, props.location.query.gameType, slogan)
+    setLoading(false)
+    createGameNFTTemplate(currentGame.uid, added?.path, props.location.query.type, props.location.query.gameType, slogan).then(() => {
+      history.push({
+        pathname: '/preview-page',
+        query: {
+          type: props.location.query.type
+        }
+      })
+    })
   }
 
   const handleColorPicker = (anchor: boolean) => {
@@ -151,6 +154,9 @@ export default function ModifyPage(props: any) {
   useCurrentUser()
   return (
     <div className='modify-page'>
+      {loading ? <div className='spin'>
+        <Spin tip="imgae uploading..." size="large" />
+      </div> : ''}
       <div className='modify-left'>
         <div className='top-bar'>
           <div className='text-center'><img className='cursor-pointer' src={arrow} alt="" /></div>
