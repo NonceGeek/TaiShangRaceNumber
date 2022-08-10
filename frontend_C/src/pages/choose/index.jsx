@@ -1,6 +1,6 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import styles from './index.less';
-
+import {history} from "umi"
 import Rectangle from '@/assets/images/Rectangle.png';
 import Group from '@/assets/images/Group.png';
 import Price from '@/assets/images/Price.png';
@@ -9,15 +9,44 @@ import Header from '@/components/Header';
 import Card from '@/components/Card';
 import Button from '@/components/Button';
 
-export default function index() {
-  const [RaceNumber,setRaceNumber] = useState("请选择")
+import {getAllGames, getGameByGameId, getGameByOwnerAddr, getMintedNFTList, getUserNFTs} from "../../../../flow/scripts"
+import {createGame, createGameNFTTemplate, mintGameNFT, mintThemeNFT} from "../../../../flow/transactions"
 
+export default function index(props) {
+  const [RaceNumber,setRaceNumber] = useState("请选择")
+  const [mintedList,setMintedList] = useState([])
+  const [game,setGame] = useState({})
+  useEffect(() => {
+    const uid = props.location.query?.uid;
+    if(uid){
+      getGameByGameId(uid).then(item=>{
+        setGame(item)
+        getMintedNFTList(item.hostAddr,uid).then(item=>{
+          setMintedList(item)
+        })
+      })
+    }
+  },[])
+  const {issues,hostAddr,uid} = game
   const cards = [];
-  for (let i = 1000; i < 1050; i++) {
-    cards.push({ number: i, status: true });
+  for (let i = 0; i < issues; i++) {
+    if(mintedList.indexOf(i) == -1){
+      cards.push({ number: String(i).padStart(4,'0'), status: true });
+    }else{
+      cards.push({ number: String(i).padStart(4,'0'), status: false });
+    }
   }
   const getNumber = ({number})=>{
     setRaceNumber(number)
+  }
+  const mint = async (number)=>{
+    const mintNumber = Number(number)
+    if(isNaN(mintNumber)){
+      alert("请选择号码")
+    }else{
+      const x = await mintGameNFT(hostAddr,uid,number)
+      history.push(`/edit?uid=${uid}number=${RaceNumber.padStart(4,'0')}`)
+    }
   }
   return (
     <div>
@@ -35,7 +64,6 @@ export default function index() {
               <img src={Rectangle} alt="" />
             </div>
             <div className={styles.cards}>
-              <Card number={1213} status={false}></Card>
               {cards.map((card) => {
                 return <Card key={card.number} number={card.number} status={card.status} getNumber={getNumber}></Card>;
               })}
@@ -51,7 +79,7 @@ export default function index() {
                 <img src={Price} alt="" />
                 <span>50</span>
               </div>
-              <Button content="mint" url={`/edit?number=${RaceNumber}`}></Button>
+              <Button content="Mint" mintNFT={RaceNumber} mint={mint}></Button>
             </div>
           </div>
         </main>
