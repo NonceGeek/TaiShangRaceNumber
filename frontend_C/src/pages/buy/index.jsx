@@ -23,7 +23,7 @@ export default function index(props) {
               <Info></Info>
             </div>
             <div className="flex justify-center">
-              <Button content="Minte" url={`/deal?brand=${JSON.stringify(brand)}&number=${number}`}></Button>
+              <Button content="mint" url={`/deal?brand=${JSON.stringify(brand)}&number=${number}`}></Button>
             </div>
           </div>
         </main>
