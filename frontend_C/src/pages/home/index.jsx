@@ -1,6 +1,10 @@
 import { useState } from 'react'
 import { history } from 'umi'
 
+import { useCurrentUser } from '@/requests/index.js'
+import { getAllGames, getBalance } from '../../../../flow/scripts'
+import { createFlowtokenVault } from '../../../../flow/transactions'
+
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper'
 import 'swiper/swiper-bundle.css'
@@ -14,15 +18,18 @@ import RunnerImg from '@/assets/images/runner.png'
 import event1Img from '@/assets/images/event1.png'
 import event2Img from '@/assets/images/event2.png'
 import event3Img from '@/assets/images/event3.png'
-import bloctoIcon from '@/assets/images/blocto.png'
+import avatarImg from '@/assets/images/avatar.png'
+import walletImg from '@/assets/images/wallet.png'
 
+import bloctoIcon from '@/assets/images/blocto.png'
 import SearchIcon from '@/assets/icons/search.svg'
 import runActivedIcon from '@/assets/icons/runActived.png'
 import rideIcon from '@/assets/icons/ride.png'
 import moreIcon from '@/assets/icons/more.png'
 import closeIcon from '@/assets/icons/close.svg'
 
-import './home.less'
+import './index.less'
+import { useEffect } from 'react'
 
 const events = [
   {
@@ -89,14 +96,40 @@ const events = [
   },
 ]
 
-
 export default function IndexPage() {
   const [showMask, setShowMask] = useState(false)
-  const jumpTo = (path: string) => {
-    history.push({
-      pathname: path
-    })
+  const [games, setGames] = useState([])
+  const [userAddr, setUserAddr] = useState('')
+  const [user, addr, logIn, logOut] = useCurrentUser()
+
+  useEffect(async () => {
+    const result = await getAllGames()
+    setGames(result)
+  }, [])
+
+  const doLogin = async () => {
+    try {
+      await logIn()
+      setUserAddr(JSON.parse(sessionStorage.CURRENT_USER).addr)
+    } catch (err) {
+      console.error(err)
+    }
   }
+
+  const rememberMe = () => {
+    setShowMask(false)
+    localStorage.setItem('addr', userAddr)
+  }
+
+  const getUserBalance = async () => {
+    try {
+      await getBalance(userAddr)
+    } catch (error) {
+      await createFlowtokenVault()
+      await getBalance(userAddr)
+    }
+  }
+
   return (
     <div id='index' className='w-screen flex flex-col items-center relative'>
       {/* header */}
@@ -108,16 +141,24 @@ export default function IndexPage() {
           id="header"
           className='w-main mx-auto flex justify-between items-center'
         >
-          <img src={LogoImg} className='h-14' alt="logo"/>
+          <img src={LogoImg} className='h-14' alt="logo" />
           <div id="search" className='h-14 pl-6 rounded-full flex items-center'>
             <img src={SearchIcon} className='h-6' alt="search" />
             <span className='search-text ml-3'>Search</span>
           </div>
-          <div
-            id="login"
-            className='h-14 px-10 py-1.5 flex justify-center items-center border border-solid border-blue rounded-lg text-blue text-xl font-bold leading-none cursor-pointer'
-            onClick={() => setShowMask(true)}
-          >Log in</div>
+          {!localStorage.getItem('addr') && (
+            <div
+              id="login"
+              className='h-14 px-10 py-1.5 flex justify-center items-center border border-solid border-blue rounded-lg text-blue text-xl font-bold leading-none cursor-pointer'
+              onClick={() => setShowMask(true)}
+            >Log in</div>
+          )}
+          {localStorage.getItem('addr') && (
+            <div className='user flex items-center'>
+              <img src={avatarImg} className='h-12 cursor-pointer' alt="avatar" />
+              <img onClick={getUserBalance} src={walletImg} className='h-12 ml-8 cursor-pointer' alt="wallet" />
+            </div>
+          )}
         </div>
       </div>
 
@@ -126,10 +167,10 @@ export default function IndexPage() {
         <img src={SlogonImg} className='w-full' alt="R" />
         <div id="buttons" className='-mt-16 mr-16 flex justify-end items-center'>
           <div className='rect-button w-64'>
-            <RectButton btnText={'Explore'} type={'rect'} onClick={jumpTo('/index')} />
+            <RectButton btnText={'Explore'} type={'rect'} />
           </div>
           <div className='rect-button w-64 ml-20'>
-            <RectButton btnText={'Create games'} type={'rect'} onClick={jumpTo('/edit-page')} />
+            <RectButton onClick={() => history.push({ pathname: '/index' })} btnText={'Create games'} type={'rect'} />
           </div>
         </div>
       </div>
@@ -169,7 +210,7 @@ export default function IndexPage() {
                 </div>
               </div>
               <div className='rect-button w-64 ml-24'>
-                <RectButton btnText={'Explore'} type={'rect'} onClick={jumpTo} />
+                <RectButton btnText={'Explore'} type={'rect'} />
               </div>
             </div>
           </SwiperSlide>
@@ -246,25 +287,41 @@ export default function IndexPage() {
         <div
           id="mask"
           className='fixed z-20 top-0 bottom-0 left-0 right-0 flex justify-center items-center'
-          onClick={() => setShowMask(false)}
         >
-          <div id="popup" className='flex flex-col justify-between items-center bg-white rounded-lg px-7 py-8'>
+          <div id="popup" className='flex flex-col justify-between items-center bg-white rounded-lg px-7 py-8' onClick={() => { }}>
             <div className="header w-full flex justify-between items-center">
               <div className="placeholder"></div>
               <div className="main text-gray-600 text-4xl leading-none font-bold">Connect wallet</div>
-              <img onClick={() => setShowMask(false)} className='mt-1 w-5' src={closeIcon} alt="close" />
+              <img onClick={() => setShowMask(false)} className='mt-1 w-5 cursor-pointer' src={closeIcon} alt="close" />
             </div>
-            <div className="main flex flex-col items-center">
-              <div className="button flex items-center gap-x-4 px-12 py-2 border border-solid border-gray-400 rounded-lg">
-                <img className='w-8' src={bloctoIcon} alt="blocto" />
-                <span className='text-2xl font-bold'>BLOCTO</span>
+            {!userAddr && (
+              <div className="main flex flex-col items-center">
+                <div
+                  className="button flex items-center gap-x-4 px-12 py-2 border border-solid border-gray-400 rounded-lg cursor-pointer"
+                  onClick={doLogin}
+                >
+                  <img className='w-8' src={bloctoIcon} alt="blocto" />
+                  <span className='text-2xl font-bold'>BLOCTO</span>
+                </div>
+                <div className="no-wallet mt-2 text-xl text-gray-400 underline">I don't have a wallet</div>
+                <div className="footer mt-8 flex items-center">
+                  <input className='rounded' type="checkbox" defaultChecked name="agree" id="agree" />
+                  <span className='ml-2 text-gray-300'>I agree to RaceNumber Terms and Privacy Policy.</span>
+                </div>
               </div>
-              <div className="no-wallet mt-2 text-xl text-gray-400 underline">I don't have a wallet</div>
-            </div>
-            <div className="footer flex items-center">
-              <input type="checkbox" name="agree" id="agree" />
-              <span className='agree ml-2 text-xs text-gray-300'>I agree to RaceNumber <span className='underline text-gray-400'>Terms</span> and <span className='underline text-gray-400'>Privacy Policy</span>.</span>
-            </div>
+            )}
+            {userAddr && (
+              <div className="main flex flex-col items-center">
+                <div className="px-4 text-lg text-gray-500">Skip approving every interaction with your wallet buy allowing RaceNumber to remember you.</div>
+                <div className="mt-6 px-4 py-2 bg-gray-200 text-xl text-gray-500 font-bold">{userAddr}</div>
+                <div className='mt-8 rect-button w-56'>
+                  <RectButton onClick={rememberMe} btnText={'Remember Me'} type={'rect'} />
+                </div>
+                <div className="footer mt-8 flex items-center">
+                  <div className='px-4 text-sm text-gray-400'>Signing keys can only sign messgaes and cannot hold funds. They are stored securely in the browser database system.</div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}

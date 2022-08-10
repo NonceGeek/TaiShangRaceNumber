@@ -73,7 +73,7 @@ export default function index(props) {
             <div className={styles.gameName}>RaceNumber Marathon</div>
             <div className={styles.no}>NO.</div>
             <div className={styles.number}>{RaceNumber?RaceNumber:'0000'}</div>
-            <div className={styles.minte}>
+            <div className={styles.mint}>
               <div className={styles.price}>
                 Price
                 <img src={Price} alt="" />

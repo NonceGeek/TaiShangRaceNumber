@@ -1,6 +1,7 @@
 import './index.less'
 import React from 'react';
 import { Button} from "antd"
+import { history } from 'umi'
 
 const btnStyles = {
   rect: {
@@ -37,10 +38,24 @@ export default class CustomTitle extends React.Component<any>{
 
     constructor(props: any) {
       super(props);
+      console.log(props)
     }
 
     click = () => {
-      this.props.onClick('click')
+      if (this.props.onClick) {
+        this.props.onClick('click')
+      } else {
+        console.log(this.props.btnText)
+        if (this.props.btnText === 'Create games') {
+          history.push({
+            pathname: '/edit-page'
+          })
+        } else if (this.props.btnText === 'Explore') {
+          history.push({
+            pathname: '/index'
+          })
+        }
+      }
     }
     
     render() {
