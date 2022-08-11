@@ -14,5 +14,5 @@ export default defineConfig({
     { path: '/deal', component: '@/pages/deal' }
   ],
   fastRefresh: {},
-  mfsu: {}
+  // mfsu: {}
 });

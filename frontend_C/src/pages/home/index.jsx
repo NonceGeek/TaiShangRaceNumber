@@ -100,12 +100,29 @@ export default function IndexPage() {
   const [showMask, setShowMask] = useState(false)
   const [games, setGames] = useState([])
   const [userAddr, setUserAddr] = useState('')
+  const [balance, setBalance] = useState(null)
+  const [showBalance, setShowBalance] = useState(false)
   const [user, addr, logIn, logOut] = useCurrentUser()
 
   useEffect(async () => {
     const result = await getAllGames()
     setGames(result)
+
+    if (sessionStorage.getItem('addr')) {
+      setUserAddr(sessionStorage.getItem('addr'))
+    }
   }, [])
+
+  useEffect(() => {
+    !!userAddr && sessionStorage.setItem('addr', userAddr)
+  }, [userAddr])
+
+  useEffect(() => {
+    balance && balance > 0 && setShowBalance(true)
+    setTimeout(() => {
+      setShowBalance(false)
+    }, 10000)
+  }, [balance])
 
   const doLogin = async () => {
     try {
@@ -118,18 +135,26 @@ export default function IndexPage() {
 
   const rememberMe = () => {
     setShowMask(false)
-    localStorage.setItem('addr', userAddr)
   }
 
   const getUserBalance = async () => {
     try {
-      await getBalance(userAddr)
+      const result = await getBalance(userAddr)
+      setBalance(result)
+      console.log('正常获取余额', result)
+
     } catch (error) {
       await createFlowtokenVault()
-      await getBalance(userAddr)
+      const result = await getBalance(userAddr)
+      setBalance(result)
+      console.log('重新获取余额', result)
     }
   }
 
+  const truncateAddr = (addr) => {
+    return `${addr.substring(0, 4)}...${addr.substring(addr.length - 4)}`
+  }
+  
   return (
     <div id='index' className='w-screen flex flex-col items-center relative'>
       {/* header */}
@@ -146,17 +171,28 @@ export default function IndexPage() {
             <img src={SearchIcon} className='h-6' alt="search" />
             <span className='search-text ml-3'>Search</span>
           </div>
-          {!localStorage.getItem('addr') && (
+          {!sessionStorage.getItem('addr') && (
             <div
               id="login"
               className='h-14 px-10 py-1.5 flex justify-center items-center border border-solid border-blue rounded-lg text-blue text-xl font-bold leading-none cursor-pointer'
               onClick={() => setShowMask(true)}
             >Log in</div>
           )}
-          {localStorage.getItem('addr') && (
+          {sessionStorage.getItem('addr') && (
             <div className='user flex items-center'>
               <img src={avatarImg} className='h-12 cursor-pointer' alt="avatar" />
-              <img onClick={getUserBalance} src={walletImg} className='h-12 ml-8 cursor-pointer' alt="wallet" />
+              <div className='relative h-12 ml-8'>
+                <img onClick={getUserBalance} src={walletImg} className='h-12 cursor-pointer' alt="wallet" />
+                {showBalance && (
+                  <div className='userinfo absolute rounded-lg p-4 bg-white shadow-lg flex flex-col items-center'>
+                    <div className="addr text-xl font-bold">{truncateAddr(userAddr)}</div>
+                    <div className="balance mt-2 flex items-center">
+                      <img src={bloctoIcon} className='w-4 h-4' alt="wallet" />
+                      <span className='ml-2 text-gray-500 text-2xl'>{(+balance).toFixed(2)}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
           )}
         </div>
@@ -167,10 +203,10 @@ export default function IndexPage() {
         <img src={SlogonImg} className='w-full' alt="R" />
         <div id="buttons" className='-mt-16 mr-16 flex justify-end items-center'>
           <div className='rect-button w-64'>
-            <RectButton btnText={'Explore'} type={'rect'} />
+            <RectButton btnText={'Explore'} type={'rect'} onClick={() => history.push({ pathname: '/index' })} />
           </div>
           <div className='rect-button w-64 ml-20'>
-            <RectButton onClick={() => history.push({ pathname: '/index' })} btnText={'Create games'} type={'rect'} />
+            <RectButton onClick={() => history.push({ pathname: '/edit-page' })} btnText={'Create games'} type={'rect'} />
           </div>
         </div>
       </div>
