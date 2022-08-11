@@ -12,9 +12,6 @@ export default function TemplateCall(){
         //await getAllGames()
         //await getGameByOwnerAddr(user.addr)
         //await getGameByGameId(29)
-        
-        
-        
       } catch(e){
         console.error(e)
       }
@@ -38,7 +35,7 @@ export default function TemplateCall(){
     },[user])
     //////////////////////////////
     return <div>
-      Template Call 
-      User addr: {user.addr}
+      {/* Template Call 
+      User addr: {user.addr} */}
       </div>
 }

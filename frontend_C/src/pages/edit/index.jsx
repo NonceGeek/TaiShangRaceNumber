@@ -10,20 +10,33 @@ import Header from '@/components/Header';
 import Button from '@/components/Button';
 import Brand from '@/components/Brand';
 import Bg from '@/components/Bg';
+import {getAllGames, getGameByGameId, getGameByOwnerAddr, getMintedNFTList, getUserNFTs} from "../../../../flow/scripts"
+import {createGame, createGameNFTTemplate, mintGameNFT, mintThemeNFT} from "../../../../flow/transactions"
 export default function index(props) {
-  console.log(props.location.query.number);
   const [img,setImg] = useState({})
   const [number,setNumber] = useState()
+  const [game,setGame] = useState({})
   useEffect(() => { 
     setImg(brandInfo.img);
   },[brandInfo])
-  useEffect(()=>{
-    setNumber(props.location.query.number)
-  },[props.location.query.number])
+
+  useEffect(() => {
+    const uid = props.location.query?.uid;
+    const number = props.location.query?.number;
+    if(uid){
+      getGameByGameId(uid).then(item=>{
+        setGame(item)
+      })
+    }
+    if(number){
+      setNumber(number)
+    }
+  },[])
+  const {uid} = game
   const brandInfo = {
-    title: 'Run! Run! Run!',
-    topic: 'RaceNumber Marathon 2024',
-    type: 'eightBorder',
+    title: game?.slogan,
+    topic: game?. gameName,
+    type: game.templateType,
     img: { background: 'linear-gradient(180deg, #4D7FFF 0%, #9D9BFF 99.99%)' },
   };
 
@@ -64,7 +77,7 @@ export default function index(props) {
               Add material
             </div>
             <div className={styles.btn}>
-              <Button content="Confirm" url={`/buy?brand=${JSON.stringify(brand)}&number=${number}`}></Button>
+              <Button content="Confirm" url={`/buy?uid=${uid}&number=${number}`}></Button>
             </div>
           </div>
         </main>

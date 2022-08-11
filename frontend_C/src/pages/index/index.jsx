@@ -20,14 +20,17 @@ import TemplateCall from '../../requests/TemplateCall';
 import CHAIN_CONFIG from '../../../../flow/config.json'
 
 import {getAllGames, getGameByGameId, getGameByOwnerAddr, getMintedNFTList, getUserNFTs} from "../../../../flow/scripts"
+import {createGame, createGameNFTTemplate, mintGameNFT, mintThemeNFT} from "../../../../flow/transactions"
+
 export default function index() {
   console.log(CHAIN_CONFIG)
   getAllGames().then(item=>{
     console.log(item);
   })
+
   return (
     <div>
-      <TemplateCall></TemplateCall>
+      {/* <TemplateCall></TemplateCall> */}
       <div className={styles.main}>
         <header>
           <Header></Header>

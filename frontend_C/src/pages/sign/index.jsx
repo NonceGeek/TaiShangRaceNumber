@@ -9,17 +9,23 @@ import Info from "@/components/Info"
 import Button from "@/components/Button";
 
 import {getAllGames, getGameByGameId, getGameByOwnerAddr, getMintedNFTList, getUserNFTs} from "../../../../flow/scripts"
+import {createGame, createGameNFTTemplate, mintGameNFT, mintThemeNFT} from "../../../../flow/transactions"
 import { useCurrentUser } from '../../requests'
 
 export default function index(props) {
+  getAllGames().then(item=>{
+    console.log(item);
+  })
   const [game,setGame] = useState({})
   const [uid,setUid] = useState()
   useEffect(() => {
-    const uid = props.location.query.uid;
-    setUid(uid)
-    getGameByGameId(uid).then(item=>{
-      setGame(item)
-    })
+    const uid = props.location.query?.uid;
+    if(uid){
+      setUid(uid)
+      getGameByGameId(uid).then(item=>{
+        setGame(item)
+      })
+    }
   },[])
   const {slogan,gameName,timestamp} = game
   return (
