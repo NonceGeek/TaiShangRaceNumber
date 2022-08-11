@@ -90,10 +90,18 @@ export default function PreviewPage(props: any) {
             </div>
             <div className='mt-32 flex' style={{justifyContent: 'left'}}>
               <div className='btn-wrap confirm-btn mr-10'>
-                <RectButton btnText={'Submit'} type={'rect'} />
+                <RectButton btnText={'Submit'} type={'rect'} onClick={() => {
+                  history.push({
+                    pathname: '/'
+                  })
+                }} />
               </div>
               <div className='btn-wrap confirm-btn ml-10'>
-                <RectButton btnText={'Modify'} type={'rect'} />
+                <RectButton btnText={'Modify'} type={'rect'} onClick={() => {
+                  history.push({
+                    pathname: '/index'
+                  })
+                }} />
               </div>
             </div>
           </div>

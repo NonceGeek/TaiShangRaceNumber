@@ -15,16 +15,24 @@ import image_9 from "@/assets/images/image_9.jpg";
 import image_10 from "@/assets/images/image_10.jpg";
 import image_11 from "@/assets/images/image_11.jpg";
 import createImg from "@/assets/icons/create.png";
+import { getAllGames } from '../../../../flow/scripts'
 
 import Header from '../../components/header'
 import Number from "../../components/Number"
 import { history } from 'umi'
+import { useState } from 'react';
+import { useEffect } from 'react';
 export default function index() {
   const jump = () => {
     history.push({
         pathname: '/edit-page'
     })
   }
+  const [result, setResult] = useState(null)
+  useEffect(async () => {
+    const list = await getAllGames()
+    setResult(list)
+  }, [])
   return (
     <div>
       <div className={styles.main}>
@@ -45,11 +53,25 @@ export default function index() {
         <main>
             <div className={styles.content}>
                 <div className={styles.title}>Event management</div>
-                <div className={styles.image1}>
-                    <Number title="Run! Run! Run!" number="1213" topic="RaceNumber Marathon 2024" price={50} time={30}></Number>
-                    <div className='box-border ml-6 mt-6 mb-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer flex flex-col items-center' style={{width: '254.07px'}} onClick={jump}>
+                <div className={styles.image1} style={{overflowX: 'scroll'}}>
+                    {result && result.map(item => {
+                        if(item.imageHash) {
+                            return <div style={{marginRight: '20px'}}>
+                                <Number 
+                                    key={item.uid}
+                                    title={item.slogan} 
+                                    number="1213" 
+                                    topic={item.gameName} 
+                                    price={item.price} 
+                                    time={item.timestamp} 
+                                    minted={item.mintedNum}
+                                    issues={item.issues}></Number>
+                            </div>
+                        }
+                    })}
+                    <div className='box-border mt-6 mb-4 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer flex flex-col items-center' style={{width: '254.07px'}} onClick={jump}>
                         <img className='mt-12' style={{width: '50%', height: 'auto'}} src={createImg} alt="create-game" />
-                        <span className='mt-24 flex items-end text-2xl font-bold text-gray-400'>Create a game</span>
+                        <span className='mt-24 flex items-end text-2xl font-bold text-gray-400' style={{width: '254.07px', display: 'inline-block', textAlign: 'center'}}>Create a game</span>
                     </div>
                 </div>
             </div>
