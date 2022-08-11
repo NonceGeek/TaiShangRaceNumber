@@ -15,5 +15,9 @@ export default defineConfig({
   fastRefresh: {},
   base: process.env.NODE_ENV === 'production' ? '/hoster/' : '/',
   publicPath: process.env.NODE_ENV === 'production' ? '/hoster/' : '/',
+  externals: {
+    tailwindcss: 'tailwindcss',
+  },
+  styles: ['https://test.uppbook.com.cn/vendor/css/tailwind_v2.2.19.min.css'],
   // mfsu:{},
 });
