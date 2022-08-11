@@ -13,5 +13,7 @@ export default defineConfig({
     { path: '/preview-page', component: '@/pages/preview-page' }
   ],
   fastRefresh: {},
+  base: process.env.NODE_ENV === 'production' ? '/hoster/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/hoster/' : '/',
   // mfsu:{},
 });

@@ -32,6 +32,7 @@ export default function ModifyPage(props: any) {
   const [loading, setLoading] = useState(false)
   const [bg, setBg] = useState('linear-gradient(180deg, #4D7FFF 0%, #9D9BFF 99.99%)')
   const [currentGame, setCurrentGame] = useState(null) as any
+  const gameData = JSON.parse(sessionStorage.getItem('gameData'))
   const handleChangeColor = (e: any) => {
     setColor(e.hex)
   }
@@ -102,6 +103,9 @@ export default function ModifyPage(props: any) {
           type: props.location.query.type
         }
       })
+      gameData.slogan = slogan
+      gameData.bgColor = bg
+      sessionStorage.setItem('gameData', JSON.stringify(gameData))
     })
   }
 
@@ -171,7 +175,6 @@ export default function ModifyPage(props: any) {
       setCurrentGame(res[res.length - 1])
     })
   }, [props.location.query.type])
-  const gameData = JSON.parse(sessionStorage.getItem('gameData'))
   useCurrentUser()
   return (
     <div className='modify-page'>
