@@ -14,5 +14,7 @@ export default defineConfig({
     { path: '/deal', component: '@/pages/deal' }
   ],
   fastRefresh: {},
+  base: process.env.NODE_ENV === 'production' ? '/runner/' : '/',
+  publicPath: process.env.NODE_ENV === 'production' ? '/runner/' : '/',
   // mfsu: {}
 });

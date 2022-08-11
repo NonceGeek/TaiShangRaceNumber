@@ -5,6 +5,7 @@ import { useCurrentUser } from '@/requests/index.js'
 import { getAllGames, getBalance } from '../../../../flow/scripts'
 import { createFlowtokenVault } from '../../../../flow/transactions'
 
+import dayjs from 'dayjs'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper'
 import 'swiper/swiper-bundle.css'
@@ -99,6 +100,7 @@ const events = [
 export default function IndexPage() {
   const [showMask, setShowMask] = useState(false)
   const [games, setGames] = useState([])
+  const [showGames, setShowGames] = useState(false)
   const [userAddr, setUserAddr] = useState('')
   const [balance, setBalance] = useState(null)
   const [showBalance, setShowBalance] = useState(false)
@@ -106,12 +108,26 @@ export default function IndexPage() {
 
   useEffect(async () => {
     const result = await getAllGames()
-    setGames(result)
+    const now = Date.now()
+    const events = result.splice(-6).reverse().map(event => {
+      const obj = {
+        ...event,
+        days: dayjs.unix(event.timestamp).diff(now, 'days'),
+        hours: dayjs.unix(event.timestamp).diff(now, 'hours') % 24,
+        mins: dayjs.unix(event.timestamp).diff(now, 'minutes') % 60,
+      }
+      return obj
+    })
+    setGames(events)
 
     if (sessionStorage.getItem('addr')) {
       setUserAddr(sessionStorage.getItem('addr'))
     }
   }, [])
+
+  useEffect(() => {
+    games.length > 0 && setShowGames(true)
+  }, [games])
 
   useEffect(() => {
     !!userAddr && sessionStorage.setItem('addr', userAddr)
@@ -154,6 +170,13 @@ export default function IndexPage() {
   const truncateAddr = (addr) => {
     return `${addr.substring(0, 4)}...${addr.substring(addr.length - 4)}`
   }
+
+  const goSign = (uid) => {
+    history.push({
+      pathname: '/sign',
+      search: `?uid=${uid}`,
+    })
+  }
   
   return (
     <div id='index' className='w-screen flex flex-col items-center relative'>
@@ -180,7 +203,7 @@ export default function IndexPage() {
           )}
           {sessionStorage.getItem('addr') && (
             <div className='user flex items-center'>
-              <img src={avatarImg} className='h-12 cursor-pointer' alt="avatar" />
+              <img onClick={() => history.push({ pathname: '/index' })} src={avatarImg} className='h-12 cursor-pointer' alt="avatar" />
               <div className='relative h-12 ml-8'>
                 <img onClick={getUserBalance} src={walletImg} className='h-12 cursor-pointer' alt="wallet" />
                 {showBalance && (
@@ -288,30 +311,30 @@ export default function IndexPage() {
           <img className='w-16' src={moreIcon} alt="more" />
         </div>
         <div className="mt-20 events flex flex-wrap gap-x-10 gap-y-20">
-          {events.map((event, index) => {
-            return <div className='event basic-1/3 rounded-2xl overflow-hidden flex flex-col' key={index}>
-              <img className='event-banner w-full' src={event.banner} alt="banner" />
+          {showGames && games.map((game, index) => {
+            return <div
+              className='event basic-1/3 rounded-2xl overflow-hidden flex flex-col cursor-pointer'
+              key={index}
+              onClick={() => goSign(game.uid)}
+            >
+              <img className='event-banner w-full' src={require(`@/assets/images/event${index % 3 + 1}.png`)} alt="banner" />
               <div className="event-intro px-8 py-3 pb-6 flex flex-col flex-grow font-bold">
-                <div className="event-title text-2xl">{event.title}</div>
-                <div className="event-people mt-1">{event.applied} / {event.total}</div>
-                {event.status === 'open' ? (
-                  <div className="event-count-down mt-2 flex justify-between items-center">
-                    <div className="count-down-item flex flex-col items-center">
-                      <div className="value text-2xl leading-none text-blue">{event.count?.days}</div>
-                      <div className="tag text-xs">days</div>
-                    </div>
-                    <div className="count-down-item flex flex-col items-center">
-                      <div className="value text-2xl leading-none text-blue">{event.count?.hours}</div>
-                      <div className="tag text-xs">hourss</div>
-                    </div>
-                    <div className="count-down-item flex flex-col items-center">
-                      <div className="value text-2xl leading-none text-blue">{event.count?.mins}</div>
-                      <div className="tag text-xs">mins</div>
-                    </div>
+                <div className="event-title text-2xl">{game.gameName}</div>
+                <div className="event-people mt-1">{game.mintedNum} / {game.issues}</div>
+                <div className="event-count-down mt-2 flex justify-between items-center">
+                  <div className="count-down-item flex flex-col items-center">
+                    <div className="value text-2xl leading-none text-blue">{game.days}</div>
+                    <div className="tag text-xs">days</div>
                   </div>
-                ) : (
-                  <div className="event-unopen text-xl flex flex-grow items-end">Waiting to open</div>
-                )}
+                  <div className="count-down-item flex flex-col items-center">
+                    <div className="value text-2xl leading-none text-blue">{game.hours}</div>
+                    <div className="tag text-xs">hours</div>
+                  </div>
+                  <div className="count-down-item flex flex-col items-center">
+                    <div className="value text-2xl leading-none text-blue">{game.mins}</div>
+                    <div className="tag text-xs">mins</div>
+                  </div>
+                </div>
               </div>
             </div>
           })}
