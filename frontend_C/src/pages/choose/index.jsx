@@ -45,7 +45,7 @@ export default function index(props) {
       alert("请选择号码")
     }else{
       const x = await mintGameNFT(hostAddr,uid,number)
-      history.push(`/edit?uid=${uid}number=${RaceNumber.padStart(4,'0')}`)
+      history.push(`/edit?uid=${uid}&number=${RaceNumber.padStart(4,'0')}`)
     }
   }
   return (
