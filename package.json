@@ -13,5 +13,8 @@
   },
   "dependencies": {
     "@onflow/fcl": "^1.2.0"
+  },
+  "devDependencies": {
+    "hardhat": "^2.10.1"
   }
 }
