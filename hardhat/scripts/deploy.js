@@ -15,6 +15,13 @@ async function main() {
   const token = await Token.deploy();
 
   console.log("Token address:", token.address);
+
+  const Game = await ethers.getContractFactory("Game");
+  const game = await Game.deploy();
+  console.log("Game address: ", game.address);
+  const GameFactory = await ethers.getContractFactory("GameFactory");
+  const gameFactory = await gameFactory.deploy();
+  console.log("GameFactory address: ", gameFactory.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
